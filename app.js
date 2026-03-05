@@ -163,7 +163,7 @@
   function load() {
     try {
       var t = localStorage.getItem('sm_theme');
-      if (t === 'catppuccin' || t === 'light') state.theme = t;
+      if (t === 'catppuccin' || t === 'light' || t === 'braiins') state.theme = t;
       var h = localStorage.getItem('sm_hashrate');
       if (h) state.userHashrate = parseFloat(h) || 1;
       var u = localStorage.getItem('sm_unit');
@@ -177,10 +177,14 @@
     document.documentElement.dataset.theme = state.theme;
   }
 
-  function toggleTheme() {
-    state.theme = state.theme === 'catppuccin' ? 'light' : 'catppuccin';
+  function setTheme(t) {
+    state.theme = t;
     applyTheme();
     save();
+    var btns = document.querySelectorAll('.theme-btn');
+    btns.forEach(function(b) {
+      b.classList.toggle('active', b.dataset.theme === t);
+    });
   }
 
   function init() {
@@ -189,7 +193,6 @@
 
     var input = $('hashrate-input');
     var select = $('unit-select');
-    var toggle = $('theme-toggle');
 
     if (input) input.value = state.userHashrate;
     if (select) select.value = state.unit;
@@ -209,7 +212,11 @@
       save();
       render();
     });
-    if (toggle) toggle.addEventListener('click', toggleTheme);
+    var themeBtns = document.querySelectorAll('.theme-btn');
+    themeBtns.forEach(function(b) {
+      b.classList.toggle('active', b.dataset.theme === state.theme);
+      b.addEventListener('click', function() { setTheme(b.dataset.theme); });
+    });
 
     fetchData().then(render);
     setInterval(function () { fetchData().then(render); }, 300000);
