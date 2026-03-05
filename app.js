@@ -96,7 +96,7 @@
     if (s === 0 || state.networkHashrate === 0) {
       set('odds-value', 'Waiting for network data...');
       set('expected-time', '');
-      ['prob-1d','prob-1w','prob-1m','prob-1y','prob-5y','prob-10y'].forEach(function(id) { set(id, '--'); });
+      ['prob-1d','prob-1w','prob-1m','prob-1y'].forEach(function(id) { set(id, '--'); });
       return;
     }
 
@@ -107,8 +107,6 @@
     set('prob-1w', formatProb(probability(WEEK)));
     set('prob-1m', formatProb(probability(MONTH)));
     set('prob-1y', formatProb(probability(YEAR)));
-    set('prob-5y', formatProb(probability(YEAR * 5)));
-    set('prob-10y', formatProb(probability(YEAR * 10)));
 
     var reward = blockReward(state.blockHeight);
     set('stat-hashrate', (state.networkHashrate / 1e18).toFixed(2) + ' EH/s');
