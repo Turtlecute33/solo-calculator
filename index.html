@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="catppuccin">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solo Mining Calculator</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <main>
+
+    <header>
+      <h1>Solo Mining Calculator</h1>
+      <p class="tagline">What are your chances of mining a Bitcoin block?</p>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="toggle-icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="toggle-icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <span class="toggle-thumb"></span>
+      </button>
+    </header>
+
+    <section id="input-section">
+      <label for="hashrate-input">Your Hashrate</label>
+      <div class="input-group">
+        <input type="number" id="hashrate-input" value="1" min="0" step="any">
+        <select id="unit-select">
+          <option value="TH/s">TH/s</option>
+          <option value="PH/s">PH/s</option>
+          <option value="EH/s">EH/s</option>
+        </select>
+      </div>
+      <div class="primary-result">
+        <div class="odds" id="odds-value">--</div>
+        <div class="expected-time" id="expected-time">--</div>
+      </div>
+    </section>
+
+    <section id="probability-section">
+      <h2>Chance of Finding a Block</h2>
+      <div class="card-grid">
+        <div class="card"><span class="label">1 Day</span><span class="value accent" id="prob-1d">--</span></div>
+        <div class="card"><span class="label">1 Week</span><span class="value accent" id="prob-1w">--</span></div>
+        <div class="card"><span class="label">1 Month</span><span class="value accent" id="prob-1m">--</span></div>
+        <div class="card"><span class="label">1 Year</span><span class="value accent" id="prob-1y">--</span></div>
+        <div class="card"><span class="label">5 Years</span><span class="value accent" id="prob-5y">--</span></div>
+        <div class="card"><span class="label">10 Years</span><span class="value accent" id="prob-10y">--</span></div>
+      </div>
+    </section>
+
+    <div class="network-info" id="network-section">
+      <div class="net-heading">Network <span id="refresh-indicator" class="pulse">&#x25cf;</span></div>
+      <dl class="net-list">
+        <div class="net-row"><dt>Hashrate</dt><dd id="stat-hashrate">--</dd></div>
+        <div class="net-row"><dt>Difficulty</dt><dd id="stat-difficulty">--</dd></div>
+        <div class="net-row"><dt>Block Height</dt><dd id="stat-blockheight">--</dd></div>
+        <div class="net-row"><dt>Block Reward</dt><dd id="stat-reward">--</dd></div>
+        <div class="net-row"><dt>BTC Price</dt><dd id="stat-price">--</dd></div>
+        <div class="net-row highlight"><dt>Revenue If Found</dt><dd id="stat-revenue">--</dd></div>
+      </dl>
+    </div>
+
+
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
