@@ -1,25 +1,4 @@
-[data-theme="catppuccin"] {
-  --bg: #1e1e2e;
-  --bg-card: #313244;
-  --text: #cdd6f4;
-  --text-muted: #a6adc8;
-  --accent: #fab387;
-  --accent-hover: #f9c87c;
-  --border: #45475a;
-  --input-bg: #2a2a40;
-}
-
-[data-theme="light"] {
-  --bg: #fafafa;
-  --bg-card: #ffffff;
-  --text: #1a1a2e;
-  --text-muted: #666666;
-  --accent: #f7931a;
-  --accent-hover: #e8850f;
-  --border: #e0e0e0;
-  --input-bg: #f0f0f0;
-}
-
+:root,
 [data-theme="braiins"] {
   --bg: #0D0D0D;
   --bg-card: #161616;
@@ -69,64 +48,6 @@ header h1 {
   margin-bottom: 1rem;
 }
 
-/* Theme Switcher */
-.theme-switcher {
-  display: flex;
-  gap: 2px;
-  margin: 0 auto;
-  padding: 3px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  width: fit-content;
-  transition: background-color 0.3s, border-color 0.3s;
-}
-
-.theme-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 30px;
-  border: 1px solid transparent;
-  border-radius: 7px;
-  background: transparent;
-  cursor: pointer;
-  color: var(--text-muted);
-  padding: 0;
-  transition: all 0.25s ease;
-}
-
-.theme-btn:hover {
-  color: var(--text);
-}
-
-.theme-btn.active {
-  color: var(--accent);
-  background: var(--bg);
-  border-color: var(--border);
-}
-
-.theme-btn svg {
-  width: 16px;
-  height: 16px;
-}
-
-/* Braiins sharp corners */
-[data-theme="braiins"] .card,
-[data-theme="braiins"] .input-group input[type="number"],
-[data-theme="braiins"] .input-group select,
-[data-theme="braiins"] .theme-switcher {
-  border-radius: 0;
-}
-
-[data-theme="braiins"] .theme-btn {
-  border-radius: 0;
-}
-
-[data-theme="braiins"] .theme-switcher {
-  border-radius: 0;
-}
 
 /* Input */
 #input-section { margin-bottom: 1rem; }
@@ -156,7 +77,7 @@ header h1 {
   background: var(--input-bg);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 0;
   outline: none;
   min-width: 0;
   transition: border-color 0.2s;
@@ -181,7 +102,7 @@ header h1 {
   background: var(--input-bg);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 0;
   cursor: pointer;
   outline: none;
   transition: border-color 0.2s;
@@ -217,7 +138,7 @@ header h1 {
 .card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 0;
   padding: 1rem 1.1rem;
   transition: background-color 0.3s, border-color 0.3s, transform 0.2s;
 }

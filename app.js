@@ -10,8 +10,7 @@
     blockHeight: 0,
     btcPrice: 0,
     userHashrate: 1,
-    unit: 'TH/s',
-    theme: 'catppuccin'
+    unit: 'TH/s'
   };
 
   function debounce(fn, ms) {
@@ -154,7 +153,6 @@
 
   function save() {
     try {
-      localStorage.setItem('sm_theme', state.theme);
       localStorage.setItem('sm_hashrate', String(state.userHashrate));
       localStorage.setItem('sm_unit', state.unit);
     } catch (e) {}
@@ -162,8 +160,6 @@
 
   function load() {
     try {
-      var t = localStorage.getItem('sm_theme');
-      if (t === 'catppuccin' || t === 'light' || t === 'braiins') state.theme = t;
       var h = localStorage.getItem('sm_hashrate');
       if (h) state.userHashrate = parseFloat(h) || 1;
       var u = localStorage.getItem('sm_unit');
@@ -173,23 +169,8 @@
     } catch (e) {}
   }
 
-  function applyTheme() {
-    document.documentElement.dataset.theme = state.theme;
-  }
-
-  function setTheme(t) {
-    state.theme = t;
-    applyTheme();
-    save();
-    var btns = document.querySelectorAll('.theme-btn');
-    btns.forEach(function(b) {
-      b.classList.toggle('active', b.dataset.theme === t);
-    });
-  }
-
   function init() {
     load();
-    applyTheme();
 
     var input = $('hashrate-input');
     var select = $('unit-select');
@@ -212,12 +193,6 @@
       save();
       render();
     });
-    var themeBtns = document.querySelectorAll('.theme-btn');
-    themeBtns.forEach(function(b) {
-      b.classList.toggle('active', b.dataset.theme === state.theme);
-      b.addEventListener('click', function() { setTheme(b.dataset.theme); });
-    });
-
     fetchData().then(render);
     setInterval(function () { fetchData().then(render); }, 300000);
   }
