@@ -1,11 +1,9 @@
-:root,
-[data-theme="braiins"] {
+:root {
   --bg: #0D0D0D;
   --bg-card: #161616;
   --text: #EFEFEF;
   --text-muted: #8D8D8D;
   --accent: #6B50FF;
-  --accent-hover: #8B7CFF;
   --border: #262626;
   --input-bg: #1A1A1A;
 }
@@ -22,7 +20,6 @@ body {
   color: var(--text);
   line-height: 1.5;
   min-height: 100vh;
-  transition: background-color 0.3s, color 0.3s;
 }
 
 main {

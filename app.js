@@ -7,8 +7,9 @@
   var state = {
     networkHashrate: 0,
     difficulty: 0,
-    blockHeight: 0,
-    btcPrice: 0,
+    blockHeight: null,
+    btcPrice: null,
+    hasBtcPrice: false,
     userHashrate: 1,
     unit: 'TH/s'
   };
@@ -20,7 +21,10 @@
 
   // Thin-space thousand separator (no commas, no apostrophes)
   function fmt(n) {
-    var s = String(Math.round(n));
+    if (!isFinite(n)) return 'N/A';
+    var rounded = Math.round(n);
+    // toFixed(0) avoids scientific notation for large numbers
+    var s = rounded < 1e20 ? String(rounded) : rounded.toFixed(0);
     var out = '';
     for (var i = s.length - 1, c = 0; i >= 0; i--, c++) {
       if (c > 0 && c % 3 === 0) out = '\u2005' + out;
@@ -31,6 +35,10 @@
 
   function userHs() {
     return state.userHashrate * (UNITS[state.unit] || 1e12);
+  }
+
+  function isFiniteNum(n) {
+    return typeof n === 'number' && isFinite(n);
   }
 
   function blockReward(h) {
@@ -107,13 +115,14 @@
     set('prob-1m', formatProb(probability(MONTH)));
     set('prob-1y', formatProb(probability(YEAR)));
 
-    var reward = blockReward(state.blockHeight);
+    var hasHeight = isFiniteNum(state.blockHeight) && state.blockHeight >= 0;
+    var reward = hasHeight ? blockReward(state.blockHeight) : null;
     set('stat-hashrate', (state.networkHashrate / 1e18).toFixed(2) + ' EH/s');
     set('stat-difficulty', formatDiff(state.difficulty));
-    set('stat-blockheight', fmt(state.blockHeight));
-    set('stat-reward', reward + ' BTC');
-    set('stat-price', '$' + fmt(state.btcPrice));
-    set('stat-revenue', '$' + fmt(reward * state.btcPrice));
+    set('stat-blockheight', hasHeight ? fmt(state.blockHeight) : 'N/A');
+    set('stat-reward', reward === null ? 'N/A' : reward + ' BTC');
+    set('stat-price', state.hasBtcPrice ? '$' + fmt(state.btcPrice) : 'N/A');
+    set('stat-revenue', (reward !== null && state.hasBtcPrice) ? '$' + fmt(reward * state.btcPrice) : 'N/A');
   }
 
   function showPulse(on) {
@@ -121,30 +130,54 @@
     if (el) el.style.display = on ? '' : 'none';
   }
 
+  function fetchJson(url) {
+    return fetch(url).then(function (r) {
+      if (!r.ok) throw new Error('http-' + r.status);
+      return r.json();
+    });
+  }
+
+  function fetchText(url) {
+    return fetch(url).then(function (r) {
+      if (!r.ok) throw new Error('http-' + r.status);
+      return r.text();
+    });
+  }
+
   function fetchData() {
     showPulse(true);
     return Promise.allSettled([
-      fetch('https://mempool.space/api/v1/mining/hashrate/1m').then(function(r) { return r.json(); }),
-      fetch('https://mempool.space/api/blocks/tip/height').then(function(r) { return r.text(); }),
-      fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd').then(function(r) {
-        if (r.status === 429) throw new Error('rate-limited');
-        return r.json();
-      })
+      fetchJson('https://mempool.space/api/v1/mining/hashrate/1m'),
+      fetchText('https://mempool.space/api/blocks/tip/height'),
+      fetchJson('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
     ]).then(function (res) {
       if (res[0].status === 'fulfilled') {
-        state.networkHashrate = res[0].value.currentHashrate;
-        state.difficulty = res[0].value.currentDifficulty;
+        if (isFiniteNum(res[0].value.currentHashrate)) state.networkHashrate = res[0].value.currentHashrate;
+        if (isFiniteNum(res[0].value.currentDifficulty)) state.difficulty = res[0].value.currentDifficulty;
       }
       if (res[1].status === 'fulfilled') {
-        state.blockHeight = parseInt(res[1].value, 10);
+        var parsedHeight = parseInt(res[1].value, 10);
+        if (isFiniteNum(parsedHeight) && parsedHeight >= 0) state.blockHeight = parsedHeight;
       }
-      if (res[2].status === 'fulfilled' && res[2].value.bitcoin) {
+      if (
+        res[2].status === 'fulfilled' &&
+        res[2].value.bitcoin &&
+        isFiniteNum(res[2].value.bitcoin.usd) &&
+        res[2].value.bitcoin.usd > 0
+      ) {
         state.btcPrice = res[2].value.bitcoin.usd;
+        state.hasBtcPrice = true;
         try { localStorage.setItem('cachedBtcPrice', String(state.btcPrice)); } catch (e) {}
       } else {
+        state.btcPrice = null;
+        state.hasBtcPrice = false;
         try {
           var c = localStorage.getItem('cachedBtcPrice');
-          if (c) state.btcPrice = parseFloat(c);
+          var cached = parseFloat(c);
+          if (isFiniteNum(cached) && cached > 0) {
+            state.btcPrice = cached;
+            state.hasBtcPrice = true;
+          }
         } catch (e) {}
       }
       showPulse(false);
@@ -165,7 +198,11 @@
       var u = localStorage.getItem('sm_unit');
       if (u && UNITS[u]) state.unit = u;
       var c = localStorage.getItem('cachedBtcPrice');
-      if (c) state.btcPrice = parseFloat(c);
+      var cached = parseFloat(c);
+      if (isFiniteNum(cached) && cached > 0) {
+        state.btcPrice = cached;
+        state.hasBtcPrice = true;
+      }
     } catch (e) {}
   }
 
