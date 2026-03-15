@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Solo Mining Calculator</title>
-  <meta name="description" content="Calculate your probability of solo mining a block for BTC, XMR, DGB, or BCH based on your hashrate. Live network stats, block reward, and expected time.">
+  <meta name="description" content="Calculate your probability of solo mining a block for BTC, XMR, or BCH based on your hashrate. Live network stats, block reward, and expected time.">
   <meta property="og:title" content="Solo Mining Calculator">
-  <meta property="og:description" content="What are your chances of solo mining a block? Calculate odds for Bitcoin, Monero, DigiByte, and Bitcoin Cash.">
+  <meta property="og:description" content="What are your chances of solo mining a block? Calculate odds for Bitcoin, Monero, and Bitcoin Cash.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://solo.turtlecute.org">
   <meta name="twitter:card" content="summary">
@@ -32,7 +32,6 @@ header h1{font-size:1.5rem;font-weight:700;margin-bottom:.25rem}
 .coin-tab{font-family:inherit;font-size:.85rem;font-weight:600;padding:.5rem 1.2rem;background:var(--input-bg);color:var(--text-muted);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:background-color .2s,color .2s,border-color .2s}
 .coin-tab:hover{color:var(--text);border-color:var(--text-muted)}
 .coin-tab.active{background:var(--accent);color:#0D0D0D;border-color:var(--accent)}
-.algo-note{text-align:center;font-size:.75rem;color:var(--text-muted);margin-top:-1rem;margin-bottom:1.25rem}
 #input-section{margin-bottom:1rem}
 #input-section label{display:block;font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem}
 .input-group{display:flex;gap:.5rem;margin-bottom:1.5rem}
@@ -79,10 +78,8 @@ section h2{font-size:.85rem;font-weight:600;color:var(--text-muted);text-transfo
     <nav class="coin-tabs" id="coin-tabs">
       <button class="coin-tab active" data-coin="BTC">BTC</button>
       <button class="coin-tab" data-coin="XMR">XMR</button>
-      <button class="coin-tab" data-coin="DGB">DGB</button>
       <button class="coin-tab" data-coin="BCH">BCH</button>
     </nav>
-    <div class="algo-note" id="algo-note" style="display:none"></div>
 
     <section id="input-section">
       <label for="hashrate-input">Your Hashrate</label>
@@ -129,7 +126,6 @@ section h2{font-size:.85rem;font-weight:600;color:var(--text-muted);text-transfo
 (function(){'use strict';var DAY=86400,WEEK=604800,MONTH=2592000,YEAR=31536000,FETCH_TIMEOUT=12000,CACHE_MAX_AGE=3600000;
 var COINS={BTC:{name:'Bitcoin',symbol:'BTC',blockTime:600,units:{'TH/s':1e12,'PH/s':1e15,'EH/s':1e18},defaultUnit:'TH/s',geckoId:'bitcoin',formatNetHash:function(h){return(h/1e18).toFixed(2)+' EH/s'},rewardFn:function(h){if(h===null)return null;var v=Math.floor(h/210000);return v>=64?0:50/Math.pow(2,v)},deriveHashrate:function(d,bt){return d*4294967296/bt}},
 XMR:{name:'Monero',symbol:'XMR',blockTime:120,units:{'H/s':1,'KH/s':1e3,'MH/s':1e6,'GH/s':1e9},defaultUnit:'KH/s',geckoId:'monero',formatNetHash:function(h){return(h/1e9).toFixed(2)+' GH/s'},rewardFn:function(){return 0.6},deriveHashrate:function(d,bt){return d/bt}},
-DGB:{name:'DigiByte',symbol:'DGB',blockTime:75,algoNote:'SHA-256d algorithm',units:{'GH/s':1e9,'TH/s':1e12,'PH/s':1e15},defaultUnit:'TH/s',geckoId:'digibyte',formatNetHash:function(h){if(h>=1e15)return(h/1e15).toFixed(2)+' PH/s';return(h/1e12).toFixed(2)+' TH/s'},rewardFn:null,deriveHashrate:function(d,bt){return d*4294967296/bt}},
 BCH:{name:'Bitcoin Cash',symbol:'BCH',blockTime:600,units:{'TH/s':1e12,'PH/s':1e15,'EH/s':1e18},defaultUnit:'TH/s',geckoId:'bitcoin-cash',formatNetHash:function(h){return(h/1e18).toFixed(2)+' EH/s'},rewardFn:function(h){if(h===null)return null;var v=Math.floor(h/210000);return v>=64?0:50/Math.pow(2,v)},deriveHashrate:function(d,bt){return d*4294967296/bt}}};
 
 var state={coin:'',networkHashrate:0,difficulty:0,blockHeight:null,blockReward:null,price:null,hasPrice:false,userHashrate:1,unit:'TH/s'};
@@ -174,9 +170,8 @@ function fetchBlockchair(slug){return fetchJson('https://api.blockchair.com/'+sl
 function fetchBTC_mempool(){return Promise.allSettled([fetchJson('https://mempool.space/api/v1/mining/hashrate/1m'),fetchText('https://mempool.space/api/blocks/tip/height')]).then(function(res){var got=false;if(res[0].status==='fulfilled'){var v=res[0].value;if(isFiniteNum(v.currentHashrate)&&v.currentHashrate>0){state.networkHashrate=v.currentHashrate;got=true}if(isFiniteNum(v.currentDifficulty))state.difficulty=v.currentDifficulty}if(res[1].status==='fulfilled'){var h=parseInt(res[1].value,10);if(isFiniteNum(h)&&h>=0)state.blockHeight=h}if(!got)throw new Error('no BTC data from mempool')})}
 function fetchNetworkBTC(){return tryInOrder([fetchBTC_mempool,function(){return fetchBlockchair('bitcoin')},function(){return fetchMinerstat('BTC')}])}
 function fetchNetworkXMR(){return tryInOrder([function(){return fetchMinerstat('XMR')},function(){return fetchBlockchair('monero')}])}
-function fetchNetworkDGB(){return tryInOrder([function(){return fetchMinerstat('DGB','SHA-256d')},function(){return fetchBlockchair('digibyte')}])}
 function fetchNetworkBCH(){return tryInOrder([function(){return fetchMinerstat('BCH')},function(){return fetchBlockchair('bitcoin-cash')}])}
-var NETWORK_FNS={BTC:fetchNetworkBTC,XMR:fetchNetworkXMR,DGB:fetchNetworkDGB,BCH:fetchNetworkBCH};
+var NETWORK_FNS={BTC:fetchNetworkBTC,XMR:fetchNetworkXMR,BCH:fetchNetworkBCH};
 
 function fetchPrice(){var conf=coinConf();if(!conf)return Promise.resolve();var ck='cached_'+state.coin+'_price';function ap(p){state.price=p;state.hasPrice=true;try{localStorage.setItem(ck,String(p))}catch(e){}}return fetchJson('https://api.coingecko.com/api/v3/simple/price?ids='+conf.geckoId+'&vs_currencies=usd').then(function(data){var p=data&&data[conf.geckoId]&&data[conf.geckoId].usd;if(isFiniteNum(p)&&p>0){ap(p);return}throw new Error('no gecko price')}).catch(function(){return fetchJson('https://api.coincap.io/v2/assets/'+conf.geckoId).then(function(data){var p=data&&data.data&&parseFloat(data.data.priceUsd);if(isFiniteNum(p)&&p>0){ap(p);return}throw new Error('no coincap price')})}).catch(function(){try{var c=parseFloat(localStorage.getItem(ck));if(isFiniteNum(c)&&c>0){state.price=c;state.hasPrice=true}}catch(e){}})}
 
@@ -184,7 +179,7 @@ function fetchData(){showPulse(true);var fn=NETWORK_FNS[state.coin]||function(){
 
 function save(){try{localStorage.setItem('sm_hashrate_'+state.coin,String(state.userHashrate));localStorage.setItem('sm_unit_'+state.coin,state.unit);localStorage.setItem('sm_coin',state.coin)}catch(e){}}
 
-function switchCoin(coin){if(!COINS[coin]||coin===state.coin)return;state.coin=coin;state.networkHashrate=0;state.difficulty=0;state.blockHeight=null;state.blockReward=null;state.price=null;state.hasPrice=false;var conf=COINS[coin];try{var h=localStorage.getItem('sm_hashrate_'+coin);state.userHashrate=h?(parseFloat(h)||1):1;var u=localStorage.getItem('sm_unit_'+coin);state.unit=(u&&conf.units[u])?u:conf.defaultUnit}catch(e){state.userHashrate=1;state.unit=conf.defaultUnit}loadCachedNetworkState(coin);var input=$('hashrate-input'),select=$('unit-select');if(input)input.value=state.userHashrate;if(select){select.innerHTML='';var units=Object.keys(conf.units);for(var i=0;i<units.length;i++){var opt=document.createElement('option');opt.value=units[i];opt.textContent=units[i];select.appendChild(opt)}select.value=state.unit}document.querySelectorAll('.coin-tab').forEach(function(t){t.classList.toggle('active',t.dataset.coin===coin)});var noteEl=$('algo-note');if(noteEl){noteEl.textContent=conf.algoNote||'';noteEl.style.display=conf.algoNote?'':'none'}save();render();fetchData().then(render)}
+function switchCoin(coin){if(!COINS[coin]||coin===state.coin)return;state.coin=coin;state.networkHashrate=0;state.difficulty=0;state.blockHeight=null;state.blockReward=null;state.price=null;state.hasPrice=false;var conf=COINS[coin];try{var h=localStorage.getItem('sm_hashrate_'+coin);state.userHashrate=h?(parseFloat(h)||1):1;var u=localStorage.getItem('sm_unit_'+coin);state.unit=(u&&conf.units[u])?u:conf.defaultUnit}catch(e){state.userHashrate=1;state.unit=conf.defaultUnit}loadCachedNetworkState(coin);var input=$('hashrate-input'),select=$('unit-select');if(input)input.value=state.userHashrate;if(select){select.innerHTML='';var units=Object.keys(conf.units);for(var i=0;i<units.length;i++){var opt=document.createElement('option');opt.value=units[i];opt.textContent=units[i];select.appendChild(opt)}select.value=state.unit}document.querySelectorAll('.coin-tab').forEach(function(t){t.classList.toggle('active',t.dataset.coin===coin)});save();render();fetchData().then(render)}
 
 function init(){var savedCoin='BTC';try{savedCoin=localStorage.getItem('sm_coin')||'BTC'}catch(e){}if(!COINS[savedCoin])savedCoin='BTC';var input=$('hashrate-input'),select=$('unit-select');var update=debounce(function(){var v=parseFloat(input.value);if(v>0&&isFinite(v)){state.userHashrate=v;save();render()}},300);if(input)input.addEventListener('input',update);if(select)select.addEventListener('change',function(){state.unit=select.value;save();render()});document.querySelectorAll('.coin-tab').forEach(function(t){t.addEventListener('click',function(){switchCoin(t.dataset.coin)})});switchCoin(savedCoin);setInterval(function(){fetchData().then(render)},300000)}
 document.addEventListener('DOMContentLoaded',init)})();
