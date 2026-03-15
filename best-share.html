@@ -82,24 +82,29 @@ section h2{font-size:.85rem;font-weight:600;color:var(--text-muted);text-transfo
 .seo-content h2{font-size:1.1rem;font-weight:700;margin:1.5rem 0 .5rem;color:var(--text)}
 .seo-content h3{font-size:.95rem;font-weight:600;margin:1.25rem 0 .4rem;color:var(--text)}
 .seo-content p{font-size:.85rem;color:var(--text-muted);line-height:1.7;margin-bottom:.75rem}
-.nav-link{display:inline-block;font-size:.8rem;color:var(--accent);text-decoration:none;margin-bottom:1.5rem;transition:opacity .2s}
-.nav-link:hover{opacity:.8;text-decoration:underline}
+.page-nav{display:flex;gap:.5rem;justify-content:center;margin-bottom:2rem}
+.page-nav a{font-family:inherit;font-size:.85rem;font-weight:600;padding:.55rem 1.3rem;background:var(--input-bg);color:var(--text-muted);border:1px solid var(--border);border-radius:8px;text-decoration:none;transition:background-color .2s,color .2s,border-color .2s}
+.page-nav a:hover{color:var(--text);border-color:var(--text-muted)}
+.page-nav a.active{background:var(--bg-card);color:var(--text);border-color:var(--accent)}
 footer{text-align:center;padding:2rem 0 .5rem;font-size:.75rem;color:var(--text-muted)}
 footer a{color:var(--accent);text-decoration:none}
 footer a:hover{text-decoration:underline}
-@media(max-width:600px){main{padding:1.5rem 1rem}header h1{font-size:1.3rem}.input-group{flex-direction:column}.input-group select{min-width:unset}.result-pct{font-size:1.6rem}.result-verdict{font-size:1.3rem}.card .value{font-size:1.05rem}.coin-tab{padding:.45rem .9rem;font-size:.8rem}}
+@media(max-width:600px){main{padding:1.5rem 1rem}header h1{font-size:1.3rem}.input-group{flex-direction:column}.input-group select{min-width:unset}.result-pct{font-size:1.6rem}.result-verdict{font-size:1.3rem}.card .value{font-size:1.05rem}.coin-tab{padding:.45rem .9rem;font-size:.8rem}.page-nav a{padding:.45rem 1rem;font-size:.8rem}}
   </style>
 </head>
 <body>
 
   <main>
 
-    <a href="/" class="nav-link">&larr; Solo Mining Calculator</a>
-
     <header>
       <h1>Best Share Checker <span style="display:block;font-size:.55em;font-weight:400;color:var(--text-muted)">Did you find a block?</span></h1>
       <p class="tagline" id="tagline">Check if your best share was enough to mine a Bitcoin block</p>
     </header>
+
+    <nav class="page-nav">
+      <a href="/">Block Odds</a>
+      <a href="/best-share" class="active">Best Share Checker</a>
+    </nav>
 
     <nav class="coin-tabs" id="coin-tabs">
       <button class="coin-tab active" data-coin="BTC">BTC</button>
@@ -166,7 +171,7 @@ footer a:hover{text-decoration:underline}
     </article>
 
     <footer>
-      <p><a href="/">Solo Mining Calculator</a> &middot; Open source on <a href="https://github.com/Turtlecute33/solo-calculator" rel="noopener">GitHub</a></p>
+      <p>Open source on <a href="https://github.com/Turtlecute33/solo-calculator" rel="noopener">GitHub</a></p>
     </footer>
 
   </main>
