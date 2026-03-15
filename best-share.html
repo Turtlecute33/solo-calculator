@@ -104,6 +104,7 @@ footer a:hover{text-decoration:underline}
     <nav class="coin-tabs" id="coin-tabs">
       <button class="coin-tab active" data-coin="BTC">BTC</button>
       <button class="coin-tab" data-coin="BCH">BCH</button>
+      <button class="coin-tab" data-coin="XMR">XMR</button>
     </nav>
 
     <section id="input-section">
@@ -174,7 +175,8 @@ footer a:hover{text-decoration:underline}
   <script>
 (function(){'use strict';var FETCH_TIMEOUT=12000,CACHE_MAX_AGE=3600000;
 var COINS={BTC:{name:'Bitcoin',symbol:'BTC',blockTime:600,accent:'#F4A63A',blockchairSlug:'bitcoin',formatNetHash:function(h){return(h/1e18).toFixed(2)+' EH/s'},rewardFn:function(h){if(h===null)return null;var v=Math.floor(h/210000);return v>=64?0:50/Math.pow(2,v)},deriveHashrate:function(d,bt){return d*4294967296/bt}},
-BCH:{name:'Bitcoin Cash',symbol:'BCH',blockTime:600,accent:'#4AC99B',blockchairSlug:'bitcoin-cash',formatNetHash:function(h){return(h/1e18).toFixed(2)+' EH/s'},rewardFn:function(h){if(h===null)return null;var v=Math.floor(h/210000);return v>=64?0:50/Math.pow(2,v)},deriveHashrate:function(d,bt){return d*4294967296/bt}}};
+BCH:{name:'Bitcoin Cash',symbol:'BCH',blockTime:600,accent:'#4AC99B',blockchairSlug:'bitcoin-cash',formatNetHash:function(h){return(h/1e18).toFixed(2)+' EH/s'},rewardFn:function(h){if(h===null)return null;var v=Math.floor(h/210000);return v>=64?0:50/Math.pow(2,v)},deriveHashrate:function(d,bt){return d*4294967296/bt}},
+XMR:{name:'Monero',symbol:'XMR',blockTime:120,accent:'#E8734A',blockchairSlug:'monero',formatNetHash:function(h){return(h/1e9).toFixed(2)+' GH/s'},rewardFn:function(){return 0.6},deriveHashrate:function(d,bt){return d/bt}}};
 
 var UNITS={T:1e12,G:1e9,M:1e6,P:1e15,E:1e18,raw:1};
 
@@ -249,7 +251,7 @@ if(sd>0&&state.difficulty>0){
   if(isBlock){set('stat-luck','You won the lottery!')}
   else{
     var x=state.difficulty/sd;
-    if(x>=1e6){set('stat-luck','1 in '+fmt(Math.round(x))}
+    if(x>=1e6){set('stat-luck','1 in '+fmt(Math.round(x)))}
     else{set('stat-luck','1 in '+(x>=10?fmt(Math.round(x)):x.toFixed(1)))}
   }
 }else{set('stat-luck','--')}
@@ -279,16 +281,18 @@ function fetchBlockchair(slug){return fetchJson('https://api.blockchair.com/'+sl
 function fetchBTC_mempool(){return Promise.allSettled([fetchJson('https://mempool.space/api/v1/mining/hashrate/1m'),fetchText('https://mempool.space/api/blocks/tip/height')]).then(function(res){var got=false;if(res[0].status==='fulfilled'){var v=res[0].value;if(isFiniteNum(v.currentHashrate)&&v.currentHashrate>0){state.networkHashrate=v.currentHashrate;got=true}if(isFiniteNum(v.currentDifficulty))state.difficulty=v.currentDifficulty}if(res[1].status==='fulfilled'){var h=parseInt(res[1].value,10);if(isFiniteNum(h)&&h>=0)state.blockHeight=h}if(!got)throw new Error('no BTC data from mempool')})}
 function fetchNetworkBTC(){return tryInOrder([fetchBTC_mempool,function(){return fetchBlockchair('bitcoin')}])}
 function fetchNetworkBCH(){return tryInOrder([function(){return fetchBlockchair('bitcoin-cash')}])}
-var NETWORK_FNS={BTC:fetchNetworkBTC,BCH:fetchNetworkBCH};
+function fetchNetworkXMR(){return tryInOrder([function(){return fetchBlockchair('monero')}])}
+var NETWORK_FNS={BTC:fetchNetworkBTC,BCH:fetchNetworkBCH,XMR:fetchNetworkXMR};
 
-function fetchPrice(){var conf=coinConf();if(!conf)return Promise.resolve();if(state.hasPrice)return Promise.resolve();var ck='cached_'+state.coin+'_price';return fetchJson('https://api.coingecko.com/api/v3/simple/price?ids='+conf.blockchairSlug.replace('-cash','-cash')+'&vs_currencies=usd').then(function(data){var gid=state.coin==='BTC'?'bitcoin':'bitcoin-cash';var p=data&&data[gid]&&data[gid].usd;if(isFiniteNum(p)&&p>0){state.price=p;state.hasPrice=true;try{localStorage.setItem(ck,String(p))}catch(e){}return}throw new Error('no price')}).catch(function(){try{var c=parseFloat(localStorage.getItem(ck));if(isFiniteNum(c)&&c>0){state.price=c;state.hasPrice=true}}catch(e){}})}
+function fetchPrice(){var conf=coinConf();if(!conf)return Promise.resolve();if(state.hasPrice)return Promise.resolve();var ck='cached_'+state.coin+'_price';var GECKO_IDS={BTC:'bitcoin',BCH:'bitcoin-cash',XMR:'monero'};var gid=GECKO_IDS[state.coin]||conf.blockchairSlug;return fetchJson('https://api.coingecko.com/api/v3/simple/price?ids='+gid+'&vs_currencies=usd').then(function(data){var p=data&&data[gid]&&data[gid].usd;if(isFiniteNum(p)&&p>0){state.price=p;state.hasPrice=true;try{localStorage.setItem(ck,String(p))}catch(e){}return}throw new Error('no price')}).catch(function(){try{var c=parseFloat(localStorage.getItem(ck));if(isFiniteNum(c)&&c>0){state.price=c;state.hasPrice=true}}catch(e){}})}
 
 function fetchData(){showPulse(true);var fn=NETWORK_FNS[state.coin]||function(){return Promise.resolve()};return fn().then(function(){return fetchPrice()}).then(function(){cacheNetworkState();showPulse(false)},function(){cacheNetworkState();showPulse(false)})}
 
 function save(){try{localStorage.setItem('bs_share_'+state.coin,String(state.shareValue));localStorage.setItem('bs_unit_'+state.coin,state.shareUnit);localStorage.setItem('bs_coin',state.coin)}catch(e){}}
 
 function switchCoin(coin){if(!COINS[coin]||coin===state.coin)return;state.coin=coin;state.networkHashrate=0;state.difficulty=0;state.blockHeight=null;state.blockReward=null;state.price=null;state.hasPrice=false;
-try{var sv=localStorage.getItem('bs_share_'+coin);state.shareValue=sv?(parseFloat(sv)||4.2):4.2;var su=localStorage.getItem('bs_unit_'+coin);state.shareUnit=(su&&UNITS[su]!==undefined)?su:'T'}catch(e){state.shareValue=4.2;state.shareUnit='T'}
+var defUnit=coin==='XMR'?'G':'T';var defVal=coin==='XMR'?1:4.2;
+try{var sv=localStorage.getItem('bs_share_'+coin);state.shareValue=sv?(parseFloat(sv)||defVal):defVal;var su=localStorage.getItem('bs_unit_'+coin);state.shareUnit=(su&&UNITS[su]!==undefined)?su:defUnit}catch(e){state.shareValue=defVal;state.shareUnit=defUnit}
 loadCachedNetworkState(coin);
 var input=$('share-input'),select=$('unit-select');
 if(input)input.value=state.shareValue;
