@@ -3,13 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Solo Mining Calculator</title>
-  <meta name="description" content="Calculate your probability of solo mining a block for BTC, XMR, or BCH based on your hashrate. Live network stats, block reward, and expected time.">
-  <meta property="og:title" content="Solo Mining Calculator">
-  <meta property="og:description" content="What are your chances of solo mining a block? Calculate odds for Bitcoin, Monero, and Bitcoin Cash.">
+  <title>Solo Mining Calculator - Bitcoin, Monero & BCH Block Probability</title>
+  <meta name="description" content="Free solo mining calculator with live network data. Calculate your odds of finding a Bitcoin, Monero (XMR), or Bitcoin Cash block based on your hashrate. Real-time difficulty, block reward, and expected time to mine a block.">
+  <meta name="keywords" content="solo mining calculator, bitcoin solo mining, monero solo mining, bitcoin cash solo mining, mining probability, block odds calculator, hashrate calculator, solo block chance, BTC mining, XMR mining, BCH mining">
+  <link rel="canonical" href="https://solo.turtlecute.org/">
+  <meta property="og:title" content="Solo Mining Calculator - Bitcoin, Monero & BCH">
+  <meta property="og:description" content="What are your real odds of solo mining a block? Free calculator with live network hashrate, difficulty, and block reward for BTC, XMR, and BCH.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://solo.turtlecute.org">
+  <meta property="og:url" content="https://solo.turtlecute.org/">
+  <meta property="og:site_name" content="Solo Mining Calculator">
+  <meta property="og:locale" content="en_US">
   <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Solo Mining Calculator - Bitcoin, Monero & BCH">
+  <meta name="twitter:description" content="Calculate your real odds of solo mining a BTC, XMR, or BCH block. Live network stats and block reward data.">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#10B981">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%2310B981'/><text x='16' y='22' text-anchor='middle' font-size='18' font-weight='bold' fill='white'>&#x26CF;</text></svg>">
   <link rel="dns-prefetch" href="https://mempool.space">
   <link rel="dns-prefetch" href="https://api.blockchair.com">
@@ -18,6 +26,8 @@
   <link rel="preconnect" href="https://api.blockchair.com" crossorigin>
   <link rel="preconnect" href="https://api.coingecko.com" crossorigin>
   <script defer src="https://umami.priorato.org/priorato" data-website-id="a3f061e6-ad2a-410f-9b1b-f0ae24c0dfc8"></script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Solo Mining Calculator","url":"https://solo.turtlecute.org/","description":"Free solo mining probability calculator for Bitcoin, Monero, and Bitcoin Cash. Enter your hashrate to calculate your odds of finding a block with live network data.","applicationCategory":"FinanceApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"featureList":["Bitcoin solo mining odds","Monero solo mining odds","Bitcoin Cash solo mining odds","Live network hashrate","Real-time difficulty","Block reward tracking","Expected time to find a block"]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are the odds of solo mining a Bitcoin block?","acceptedAnswer":{"@type":"Answer","text":"Your odds depend on your hashrate relative to the total network hashrate. With 1 TH/s against a ~900 EH/s network, your chance per block is roughly 1 in 900 million. Use this calculator with your actual hashrate for precise odds."}},{"@type":"Question","name":"How does solo mining probability work?","acceptedAnswer":{"@type":"Answer","text":"Solo mining probability is calculated by dividing your hashrate by the total network hashrate. This gives your share of the network's mining power and your proportional chance of finding each block. The probability scales linearly with time: your daily chance multiplied by 365 equals your yearly chance."}},{"@type":"Question","name":"Can you solo mine Monero (XMR)?","acceptedAnswer":{"@type":"Answer","text":"Yes, Monero uses the RandomX algorithm designed for CPU mining, making it one of the most accessible cryptocurrencies for solo mining. With a modern CPU producing 10-20 KH/s, you can calculate your exact odds using this calculator."}},{"@type":"Question","name":"Is solo mining Bitcoin Cash (BCH) profitable?","acceptedAnswer":{"@type":"Answer","text":"Bitcoin Cash has significantly lower network hashrate than Bitcoin (~6 EH/s vs ~900 EH/s), making solo mining more feasible. However, BCH blocks are worth less. Use this calculator to compare your expected revenue across BTC, XMR, and BCH."}}]}</script>
   <style>
 :root{--bg:#0D0D0D;--bg-card:#161616;--text:#EFEFEF;--text-muted:#8D8D8D;--accent:#10B981;--border:#262626;--input-bg:#1A1A1A}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -61,6 +71,13 @@ section h2{font-size:.85rem;font-weight:600;color:var(--text-muted);text-transfo
 #refresh-indicator{font-size:.5rem;color:var(--accent)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .pulse{animation:pulse 2s ease-in-out infinite}
+.seo-content{margin-top:3rem;padding-top:2rem;border-top:1px solid var(--border)}
+.seo-content h2{font-size:1.1rem;font-weight:700;margin:1.5rem 0 .5rem;color:var(--text)}
+.seo-content h3{font-size:.95rem;font-weight:600;margin:1.25rem 0 .4rem;color:var(--text)}
+.seo-content p{font-size:.85rem;color:var(--text-muted);line-height:1.7;margin-bottom:.75rem}
+footer{text-align:center;padding:2rem 0 .5rem;font-size:.75rem;color:var(--text-muted)}
+footer a{color:var(--accent);text-decoration:none}
+footer a:hover{text-decoration:underline}
 @media(max-width:600px){main{padding:1.5rem 1rem}header h1{font-size:1.3rem}.input-group{flex-direction:column}.input-group select{min-width:unset}.primary-result .odds{font-size:1.4rem}.card .value{font-size:1.05rem}.coin-tab{padding:.45rem .9rem;font-size:.8rem}}
   </style>
 </head>
@@ -69,7 +86,7 @@ section h2{font-size:.85rem;font-weight:600;color:var(--text-muted);text-transfo
   <main>
 
     <header>
-      <h1>Solo Mining Calculator</h1>
+      <h1>Solo Mining Calculator <span style="display:block;font-size:.55em;font-weight:400;color:var(--text-muted)">BTC &middot; XMR &middot; BCH</span></h1>
       <p class="tagline" id="tagline">What are your chances of mining a Bitcoin block?</p>
     </header>
 
@@ -116,6 +133,27 @@ section h2{font-size:.85rem;font-weight:600;color:var(--text-muted);text-transfo
         <div class="net-row highlight"><dt>Revenue If Found</dt><dd id="stat-revenue">--</dd></div>
       </dl>
     </div>
+
+    <article class="seo-content">
+      <h2>Solo Mining Calculator: Find Your Block Odds</h2>
+      <p>This free solo mining calculator shows your real chances of mining a cryptocurrency block on your own. Enter your hashrate and instantly see your odds for Bitcoin (BTC), Monero (XMR), or Bitcoin Cash (BCH) with live network data updated every 5 minutes.</p>
+
+      <h3>How Solo Mining Probability Is Calculated</h3>
+      <p>Your chance of finding a block equals your hashrate divided by the total network hashrate. If you contribute 1 TH/s to a 900 EH/s Bitcoin network, your share is 1 in 900 million per block. With a new block every ~10 minutes (144 blocks/day), your daily, weekly, monthly, and yearly odds scale proportionally.</p>
+
+      <h3>Bitcoin Solo Mining</h3>
+      <p>Bitcoin uses SHA-256 proof of work with a current block reward of 3.125 BTC after the 2024 halving. The network hashrate exceeds 900 EH/s, making solo mining extremely unlikely without significant ASIC hardware. This calculator uses live data from mempool.space to show your exact odds.</p>
+
+      <h3>Monero Solo Mining</h3>
+      <p>Monero uses the RandomX algorithm, specifically designed for CPU mining. With a network hashrate around 3-5 GH/s and a fixed block reward of 0.6 XMR (tail emission), Monero remains one of the most accessible coins for solo miners using consumer hardware.</p>
+
+      <h3>Bitcoin Cash Solo Mining</h3>
+      <p>Bitcoin Cash shares Bitcoin's SHA-256 algorithm but with roughly 150x less network hashrate (~6 EH/s vs ~900 EH/s). This makes solo mining a BCH block significantly more feasible than BTC, though the block reward value is lower. BCH follows the same halving schedule as Bitcoin.</p>
+    </article>
+
+    <footer>
+      <p>Open source on <a href="https://github.com/Turtlecute33/solo-calculator" rel="noopener">GitHub</a></p>
+    </footer>
 
   </main>
 
