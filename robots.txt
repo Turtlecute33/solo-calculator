@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://solo.turtlecute.org/sitemap.xml
