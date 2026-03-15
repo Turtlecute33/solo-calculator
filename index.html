@@ -12,12 +12,10 @@
   <meta name="twitter:card" content="summary">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%2310B981'/><text x='16' y='22' text-anchor='middle' font-size='18' font-weight='bold' fill='white'>&#x26CF;</text></svg>">
   <link rel="dns-prefetch" href="https://mempool.space">
-  <link rel="dns-prefetch" href="https://api.minerstat.com">
   <link rel="dns-prefetch" href="https://api.blockchair.com">
   <link rel="dns-prefetch" href="https://api.coingecko.com">
-  <link rel="dns-prefetch" href="https://api.coincap.io">
   <link rel="preconnect" href="https://mempool.space" crossorigin>
-  <link rel="preconnect" href="https://api.minerstat.com" crossorigin>
+  <link rel="preconnect" href="https://api.blockchair.com" crossorigin>
   <link rel="preconnect" href="https://api.coingecko.com" crossorigin>
   <script defer src="https://umami.priorato.org/priorato" data-website-id="a3f061e6-ad2a-410f-9b1b-f0ae24c0dfc8"></script>
   <style>
@@ -124,9 +122,9 @@ section h2{font-size:.85rem;font-weight:600;color:var(--text-muted);text-transfo
   <noscript><p style="text-align:center;color:#8D8D8D;padding:2rem;">JavaScript is required to run this calculator.</p></noscript>
   <script>
 (function(){'use strict';var DAY=86400,WEEK=604800,MONTH=2592000,YEAR=31536000,FETCH_TIMEOUT=12000,CACHE_MAX_AGE=3600000;
-var COINS={BTC:{name:'Bitcoin',symbol:'BTC',blockTime:600,units:{'TH/s':1e12,'PH/s':1e15,'EH/s':1e18},defaultUnit:'TH/s',geckoId:'bitcoin',formatNetHash:function(h){return(h/1e18).toFixed(2)+' EH/s'},rewardFn:function(h){if(h===null)return null;var v=Math.floor(h/210000);return v>=64?0:50/Math.pow(2,v)},deriveHashrate:function(d,bt){return d*4294967296/bt}},
-XMR:{name:'Monero',symbol:'XMR',blockTime:120,units:{'H/s':1,'KH/s':1e3,'MH/s':1e6,'GH/s':1e9},defaultUnit:'KH/s',geckoId:'monero',formatNetHash:function(h){return(h/1e9).toFixed(2)+' GH/s'},rewardFn:function(){return 0.6},deriveHashrate:function(d,bt){return d/bt}},
-BCH:{name:'Bitcoin Cash',symbol:'BCH',blockTime:600,units:{'TH/s':1e12,'PH/s':1e15,'EH/s':1e18},defaultUnit:'TH/s',geckoId:'bitcoin-cash',formatNetHash:function(h){return(h/1e18).toFixed(2)+' EH/s'},rewardFn:function(h){if(h===null)return null;var v=Math.floor(h/210000);return v>=64?0:50/Math.pow(2,v)},deriveHashrate:function(d,bt){return d*4294967296/bt}}};
+var COINS={BTC:{name:'Bitcoin',symbol:'BTC',blockTime:600,units:{'TH/s':1e12,'PH/s':1e15,'EH/s':1e18},defaultUnit:'TH/s',geckoId:'bitcoin',blockchairSlug:'bitcoin',formatNetHash:function(h){return(h/1e18).toFixed(2)+' EH/s'},rewardFn:function(h){if(h===null)return null;var v=Math.floor(h/210000);return v>=64?0:50/Math.pow(2,v)},deriveHashrate:function(d,bt){return d*4294967296/bt}},
+XMR:{name:'Monero',symbol:'XMR',blockTime:120,units:{'H/s':1,'KH/s':1e3,'MH/s':1e6,'GH/s':1e9},defaultUnit:'KH/s',geckoId:'monero',blockchairSlug:'monero',formatNetHash:function(h){return(h/1e9).toFixed(2)+' GH/s'},rewardFn:function(){return 0.6},deriveHashrate:function(d,bt){return d/bt}},
+BCH:{name:'Bitcoin Cash',symbol:'BCH',blockTime:600,units:{'TH/s':1e12,'PH/s':1e15,'EH/s':1e18},defaultUnit:'TH/s',geckoId:'bitcoin-cash',blockchairSlug:'bitcoin-cash',formatNetHash:function(h){return(h/1e18).toFixed(2)+' EH/s'},rewardFn:function(h){if(h===null)return null;var v=Math.floor(h/210000);return v>=64?0:50/Math.pow(2,v)},deriveHashrate:function(d,bt){return d*4294967296/bt}}};
 
 var state={coin:'',networkHashrate:0,difficulty:0,blockHeight:null,blockReward:null,price:null,hasPrice:false,userHashrate:1,unit:'TH/s'};
 
@@ -161,21 +159,18 @@ function tryInOrder(fns){var i=0;function next(){if(i>=fns.length)return Promise
 function cacheNetworkState(){try{localStorage.setItem('sm_net_'+state.coin,JSON.stringify({networkHashrate:state.networkHashrate,difficulty:state.difficulty,blockHeight:state.blockHeight,blockReward:state.blockReward,price:state.price,ts:Date.now()}))}catch(e){}}
 function loadCachedNetworkState(coin){try{var raw=localStorage.getItem('sm_net_'+coin);if(!raw)return;var d=JSON.parse(raw);if(Date.now()-d.ts>CACHE_MAX_AGE)return;if(isFiniteNum(d.networkHashrate)&&d.networkHashrate>0)state.networkHashrate=d.networkHashrate;if(isFiniteNum(d.difficulty)&&d.difficulty>0)state.difficulty=d.difficulty;if(isFiniteNum(d.blockHeight))state.blockHeight=d.blockHeight;if(isFiniteNum(d.blockReward))state.blockReward=d.blockReward;if(isFiniteNum(d.price)&&d.price>0){state.price=d.price;state.hasPrice=true}}catch(e){}}
 
-function applyMinerstat(data,algoFilter){if(!Array.isArray(data)||data.length===0)throw new Error('empty minerstat');var coin=data[0];if(algoFilter){for(var i=0;i<data.length;i++){if(data[i].algorithm===algoFilter){coin=data[i];break}}}var got=false;if(isFiniteNum(coin.network_hashrate)&&coin.network_hashrate>0){state.networkHashrate=coin.network_hashrate;got=true}if(isFiniteNum(coin.difficulty)&&coin.difficulty>0)state.difficulty=coin.difficulty;if(isFiniteNum(coin.reward)&&coin.reward>0)state.blockReward=coin.reward;if(isFiniteNum(coin.price)&&coin.price>0){try{localStorage.setItem('cached_'+state.coin+'_price',String(coin.price))}catch(e){}}if(!got)throw new Error('no hashrate from minerstat')}
-function fetchMinerstat(coinId,algoFilter){return fetchJson('https://api.minerstat.com/v2/coins?list='+coinId).then(function(data){applyMinerstat(data,algoFilter)})}
-
-function applyBlockchair(data){if(!data||!data.data)throw new Error('bad blockchair');var d=data.data,conf=coinConf(),got=false;if(isFiniteNum(d.difficulty)&&d.difficulty>0)state.difficulty=d.difficulty;if(d.hashrate_24h){var hr=parseFloat(d.hashrate_24h);if(isFiniteNum(hr)&&hr>0){state.networkHashrate=hr;got=true}}if(!got&&state.difficulty>0&&conf.deriveHashrate){state.networkHashrate=conf.deriveHashrate(state.difficulty,conf.blockTime);got=true}if(isFiniteNum(d.best_block_height))state.blockHeight=d.best_block_height;if(isFiniteNum(d.reward_per_block))state.blockReward=d.reward_per_block;if(!got)throw new Error('no hashrate from blockchair')}
+function applyBlockchair(data){if(!data||!data.data)throw new Error('bad blockchair');var d=data.data,conf=coinConf(),got=false;if(isFiniteNum(d.difficulty)&&d.difficulty>0)state.difficulty=d.difficulty;if(d.hashrate_24h){var hr=parseFloat(d.hashrate_24h);if(isFiniteNum(hr)&&hr>0){state.networkHashrate=hr;got=true}}if(!got&&state.difficulty>0&&conf.deriveHashrate){state.networkHashrate=conf.deriveHashrate(state.difficulty,conf.blockTime);got=true}if(isFiniteNum(d.best_block_height))state.blockHeight=d.best_block_height;if(isFiniteNum(d.reward_per_block))state.blockReward=d.reward_per_block;if(isFiniteNum(d.market_price_usd)&&d.market_price_usd>0){var ck='cached_'+state.coin+'_price';if(!state.hasPrice){state.price=d.market_price_usd;state.hasPrice=true}try{localStorage.setItem(ck,String(d.market_price_usd))}catch(e){}}if(!got)throw new Error('no hashrate from blockchair')}
 function fetchBlockchair(slug){return fetchJson('https://api.blockchair.com/'+slug+'/stats').then(applyBlockchair)}
 
 function fetchBTC_mempool(){return Promise.allSettled([fetchJson('https://mempool.space/api/v1/mining/hashrate/1m'),fetchText('https://mempool.space/api/blocks/tip/height')]).then(function(res){var got=false;if(res[0].status==='fulfilled'){var v=res[0].value;if(isFiniteNum(v.currentHashrate)&&v.currentHashrate>0){state.networkHashrate=v.currentHashrate;got=true}if(isFiniteNum(v.currentDifficulty))state.difficulty=v.currentDifficulty}if(res[1].status==='fulfilled'){var h=parseInt(res[1].value,10);if(isFiniteNum(h)&&h>=0)state.blockHeight=h}if(!got)throw new Error('no BTC data from mempool')})}
-function fetchNetworkBTC(){return tryInOrder([fetchBTC_mempool,function(){return fetchBlockchair('bitcoin')},function(){return fetchMinerstat('BTC')}])}
-function fetchNetworkXMR(){return tryInOrder([function(){return fetchMinerstat('XMR')},function(){return fetchBlockchair('monero')}])}
-function fetchNetworkBCH(){return tryInOrder([function(){return fetchMinerstat('BCH')},function(){return fetchBlockchair('bitcoin-cash')}])}
+function fetchNetworkBTC(){return tryInOrder([fetchBTC_mempool,function(){return fetchBlockchair('bitcoin')}])}
+function fetchNetworkXMR(){return tryInOrder([function(){return fetchBlockchair('monero')}])}
+function fetchNetworkBCH(){return tryInOrder([function(){return fetchBlockchair('bitcoin-cash')}])}
 var NETWORK_FNS={BTC:fetchNetworkBTC,XMR:fetchNetworkXMR,BCH:fetchNetworkBCH};
 
-function fetchPrice(){var conf=coinConf();if(!conf)return Promise.resolve();var ck='cached_'+state.coin+'_price';function ap(p){state.price=p;state.hasPrice=true;try{localStorage.setItem(ck,String(p))}catch(e){}}return fetchJson('https://api.coingecko.com/api/v3/simple/price?ids='+conf.geckoId+'&vs_currencies=usd').then(function(data){var p=data&&data[conf.geckoId]&&data[conf.geckoId].usd;if(isFiniteNum(p)&&p>0){ap(p);return}throw new Error('no gecko price')}).catch(function(){return fetchJson('https://api.coincap.io/v2/assets/'+conf.geckoId).then(function(data){var p=data&&data.data&&parseFloat(data.data.priceUsd);if(isFiniteNum(p)&&p>0){ap(p);return}throw new Error('no coincap price')})}).catch(function(){try{var c=parseFloat(localStorage.getItem(ck));if(isFiniteNum(c)&&c>0){state.price=c;state.hasPrice=true}}catch(e){}})}
+function fetchPrice(){var conf=coinConf();if(!conf)return Promise.resolve();var ck='cached_'+state.coin+'_price';if(state.hasPrice)return Promise.resolve();function ap(p){state.price=p;state.hasPrice=true;try{localStorage.setItem(ck,String(p))}catch(e){}}return fetchJson('https://api.coingecko.com/api/v3/simple/price?ids='+conf.geckoId+'&vs_currencies=usd').then(function(data){var p=data&&data[conf.geckoId]&&data[conf.geckoId].usd;if(isFiniteNum(p)&&p>0){ap(p);return}throw new Error('no gecko price')}).catch(function(){try{var c=parseFloat(localStorage.getItem(ck));if(isFiniteNum(c)&&c>0){state.price=c;state.hasPrice=true}}catch(e){}})}
 
-function fetchData(){showPulse(true);var fn=NETWORK_FNS[state.coin]||function(){return Promise.resolve()};return Promise.allSettled([fn(),fetchPrice()]).then(function(){cacheNetworkState();showPulse(false)})}
+function fetchData(){showPulse(true);var fn=NETWORK_FNS[state.coin]||function(){return Promise.resolve()};return fn().then(function(){return fetchPrice()}).then(function(){cacheNetworkState();showPulse(false)},function(){cacheNetworkState();showPulse(false)})}
 
 function save(){try{localStorage.setItem('sm_hashrate_'+state.coin,String(state.userHashrate));localStorage.setItem('sm_unit_'+state.coin,state.unit);localStorage.setItem('sm_coin',state.coin)}catch(e){}}
 
