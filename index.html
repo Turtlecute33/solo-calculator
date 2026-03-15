@@ -134,21 +134,23 @@ footer a:hover{text-decoration:underline}
       </dl>
     </div>
 
-    <article class="seo-content">
-      <h2>Solo Mining Calculator: Find Your Block Odds</h2>
-      <p>This free solo mining calculator shows your real chances of mining a cryptocurrency block on your own. Enter your hashrate and instantly see your per-block odds, expected time, and daily through yearly probabilities with live network data.</p>
-
-      <h3>How the Calculation Works</h3>
-      <p>Your chance of finding a block equals your hashrate divided by the total network hashrate. With 144 blocks per day on Bitcoin (one every ~10 minutes), your daily, weekly, monthly, and yearly odds scale proportionally from your per-block share.</p>
-
-      <h2>Bitcoin (BTC) Solo Mining</h2>
-      <p>Bitcoin uses SHA-256 proof-of-work with a current block reward of 3.125 BTC after the April 2024 halving. The network hashrate exceeds 900 EH/s, requiring dedicated ASIC miners like the Antminer S21 or Whatsminer M60. Solo mining BTC is a lottery — improbable for individual miners, but someone wins every ~10 minutes. This calculator uses live data from mempool.space for accurate BTC odds.</p>
-
-      <h2>Monero (XMR) Solo Mining</h2>
-      <p>Monero uses the RandomX algorithm, specifically designed for consumer CPU mining. No ASIC hardware is needed — any modern desktop processor (AMD Ryzen, Intel Core) can mine XMR. The network hashrate sits around 3-5 GH/s with a permanent block reward of 0.6 XMR every 2 minutes (tail emission). This makes Monero one of the most accessible cryptocurrencies for solo miners.</p>
-
-      <h2>Bitcoin Cash (BCH) Solo Mining</h2>
-      <p>Bitcoin Cash uses the same SHA-256 algorithm and ASIC hardware as Bitcoin but has roughly 150 times less network hashrate (~6 EH/s). The same mining equipment has 150x better per-block odds on BCH compared to BTC. BCH follows the same halving schedule, with a current block reward of 3.125 BCH and a new block every ~10 minutes.</p>
+    <article class="seo-content coin-info" data-coin="BTC">
+      <h2>Bitcoin (BTC) Solo Mining Calculator</h2>
+      <p>Calculate your odds of solo mining a Bitcoin block. Bitcoin uses SHA-256 proof-of-work with a current block reward of 3.125 BTC after the April 2024 halving. The network hashrate exceeds 900 EH/s, requiring dedicated ASIC miners like the Antminer S21 or Whatsminer M60.</p>
+      <h3>How BTC Solo Mining Odds Work</h3>
+      <p>Your chance of finding a block equals your hashrate divided by the total network hashrate. With 144 blocks per day (one every ~10 minutes), your daily, weekly, monthly, and yearly odds scale proportionally. Solo mining BTC is a lottery — improbable for individual miners, but someone wins every ~10 minutes. This calculator uses live data from mempool.space.</p>
+    </article>
+    <article class="seo-content coin-info" data-coin="XMR" style="display:none">
+      <h2>Monero (XMR) Solo Mining Calculator</h2>
+      <p>Calculate your odds of solo mining a Monero block. Monero uses the RandomX algorithm, specifically designed for consumer CPU mining. No ASIC hardware is needed — any modern desktop processor (AMD Ryzen, Intel Core) can mine XMR.</p>
+      <h3>How XMR Solo Mining Odds Work</h3>
+      <p>The Monero network hashrate sits around 3-5 GH/s with a permanent block reward of 0.6 XMR every 2 minutes (tail emission). Your chance per block equals your CPU hashrate divided by the network total. This makes Monero one of the most accessible cryptocurrencies for solo miners using consumer hardware.</p>
+    </article>
+    <article class="seo-content coin-info" data-coin="BCH" style="display:none">
+      <h2>Bitcoin Cash (BCH) Solo Mining Calculator</h2>
+      <p>Calculate your odds of solo mining a Bitcoin Cash block. BCH uses the same SHA-256 algorithm and ASIC hardware as Bitcoin but has roughly 150 times less network hashrate (~6 EH/s), giving the same equipment 150x better per-block odds.</p>
+      <h3>How BCH Solo Mining Odds Work</h3>
+      <p>Bitcoin Cash follows the same halving schedule as Bitcoin, with a current block reward of 3.125 BCH and a new block every ~10 minutes. Your daily, weekly, monthly, and yearly probabilities scale linearly from your per-block share of the network hashrate.</p>
     </article>
 
     <footer>
@@ -212,7 +214,7 @@ function fetchData(){showPulse(true);var fn=NETWORK_FNS[state.coin]||function(){
 
 function save(){try{localStorage.setItem('sm_hashrate_'+state.coin,String(state.userHashrate));localStorage.setItem('sm_unit_'+state.coin,state.unit);localStorage.setItem('sm_coin',state.coin)}catch(e){}}
 
-function switchCoin(coin){if(!COINS[coin]||coin===state.coin)return;state.coin=coin;state.networkHashrate=0;state.difficulty=0;state.blockHeight=null;state.blockReward=null;state.price=null;state.hasPrice=false;var conf=COINS[coin];try{var h=localStorage.getItem('sm_hashrate_'+coin);state.userHashrate=h?(parseFloat(h)||1):1;var u=localStorage.getItem('sm_unit_'+coin);state.unit=(u&&conf.units[u])?u:conf.defaultUnit}catch(e){state.userHashrate=1;state.unit=conf.defaultUnit}loadCachedNetworkState(coin);var input=$('hashrate-input'),select=$('unit-select');if(input)input.value=state.userHashrate;if(select){select.innerHTML='';var units=Object.keys(conf.units);for(var i=0;i<units.length;i++){var opt=document.createElement('option');opt.value=units[i];opt.textContent=units[i];select.appendChild(opt)}select.value=state.unit}document.querySelectorAll('.coin-tab').forEach(function(t){t.classList.toggle('active',t.dataset.coin===coin)});save();render();fetchData().then(render)}
+function switchCoin(coin){if(!COINS[coin]||coin===state.coin)return;state.coin=coin;state.networkHashrate=0;state.difficulty=0;state.blockHeight=null;state.blockReward=null;state.price=null;state.hasPrice=false;var conf=COINS[coin];try{var h=localStorage.getItem('sm_hashrate_'+coin);state.userHashrate=h?(parseFloat(h)||1):1;var u=localStorage.getItem('sm_unit_'+coin);state.unit=(u&&conf.units[u])?u:conf.defaultUnit}catch(e){state.userHashrate=1;state.unit=conf.defaultUnit}loadCachedNetworkState(coin);var input=$('hashrate-input'),select=$('unit-select');if(input)input.value=state.userHashrate;if(select){select.innerHTML='';var units=Object.keys(conf.units);for(var i=0;i<units.length;i++){var opt=document.createElement('option');opt.value=units[i];opt.textContent=units[i];select.appendChild(opt)}select.value=state.unit}document.querySelectorAll('.coin-tab').forEach(function(t){t.classList.toggle('active',t.dataset.coin===coin)});document.querySelectorAll('.coin-info').forEach(function(el){el.style.display=el.dataset.coin===coin?'':'none'});save();render();fetchData().then(render)}
 
 function init(){var savedCoin='BTC';try{savedCoin=localStorage.getItem('sm_coin')||'BTC'}catch(e){}if(!COINS[savedCoin])savedCoin='BTC';var input=$('hashrate-input'),select=$('unit-select');var update=debounce(function(){var v=parseFloat(input.value);if(v>0&&isFinite(v)){state.userHashrate=v;save();render()}},300);if(input)input.addEventListener('input',update);if(select)select.addEventListener('change',function(){state.unit=select.value;save();render()});document.querySelectorAll('.coin-tab').forEach(function(t){t.addEventListener('click',function(){switchCoin(t.dataset.coin)})});switchCoin(savedCoin);setInterval(function(){fetchData().then(render)},300000)}
 document.addEventListener('DOMContentLoaded',init)})();
