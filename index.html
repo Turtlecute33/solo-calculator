@@ -75,10 +75,11 @@ section h2{font-size:.85rem;font-weight:600;color:var(--text-muted);text-transfo
 .seo-content h2{font-size:1.1rem;font-weight:700;margin:1.5rem 0 .5rem;color:var(--text)}
 .seo-content h3{font-size:.95rem;font-weight:600;margin:1.25rem 0 .4rem;color:var(--text)}
 .seo-content p{font-size:.85rem;color:var(--text-muted);line-height:1.7;margin-bottom:.75rem}
-.page-nav{display:flex;gap:.5rem;justify-content:center;margin-bottom:2rem}
-.page-nav a{font-family:inherit;font-size:.85rem;font-weight:600;padding:.55rem 1.3rem;background:var(--input-bg);color:var(--text-muted);border:1px solid var(--border);border-radius:8px;text-decoration:none;transition:background-color .2s,color .2s,border-color .2s}
-.page-nav a:hover{color:var(--text);border-color:var(--text-muted)}
-.page-nav a.active{background:var(--bg-card);color:var(--text);border-color:var(--accent)}
+.page-nav{display:inline-flex;background:var(--input-bg);border:1px solid var(--border);border-radius:10px;padding:3px;margin:0 auto 2rem;width:auto}
+.page-nav-wrap{text-align:center}
+.page-nav a{font-family:inherit;font-size:.85rem;font-weight:600;padding:.5rem 1.4rem;background:transparent;color:var(--text-muted);border:none;border-radius:8px;text-decoration:none;transition:background-color .2s,color .2s,box-shadow .2s}
+.page-nav a:hover{color:var(--text)}
+.page-nav a.active{background:var(--accent);color:#0D0D0D;box-shadow:0 1px 4px rgba(244,166,58,.25)}
 footer{text-align:center;padding:2rem 0 .5rem;font-size:.75rem;color:var(--text-muted)}
 footer a{color:var(--accent);text-decoration:none}
 footer a:hover{text-decoration:underline}
@@ -94,10 +95,12 @@ footer a:hover{text-decoration:underline}
       <p class="tagline" id="tagline">What are your chances of mining a Bitcoin block?</p>
     </header>
 
-    <nav class="page-nav">
-      <a href="/" class="active">Block Odds</a>
-      <a href="/best-share">Best Share Checker</a>
-    </nav>
+    <div class="page-nav-wrap">
+      <nav class="page-nav">
+        <a href="/" class="active">Block Odds</a>
+        <a href="/best-share">Best Share</a>
+      </nav>
+    </div>
 
     <nav class="coin-tabs" id="coin-tabs">
       <button class="coin-tab active" data-coin="BTC">BTC</button>
