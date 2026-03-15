@@ -134,7 +134,7 @@ function coinConf(){return COINS[state.coin]}
 function userHs(){var c=coinConf();return state.userHashrate*(c.units[state.unit]||1)}
 function isFiniteNum(n){return typeof n==='number'&&isFinite(n)}
 function share(){return state.networkHashrate>0?userHs()/state.networkHashrate:0}
-function probability(sec){var c=coinConf(),lam=(sec/c.blockTime)*share();if(lam<1e-10)return lam;return 1-Math.exp(-lam)}
+function probability(sec){var c=coinConf();return(sec/c.blockTime)*share()}
 function getReward(){if(state.blockReward!==null)return state.blockReward;var c=coinConf();if(c.rewardFn)return c.rewardFn(state.blockHeight);return null}
 function formatProb(p){if(p<=0)return'0%';if(p>=.9999)return'> 99.99%';var pct=p*100;if(pct>=1)return pct.toFixed(2)+'%';if(pct>=.01)return pct.toFixed(4)+'%';return'1 in '+fmt(1/p)}
 function formatTime(sec){if(!isFinite(sec)||sec<=0)return'Never';var tiers=[{l:'year',v:YEAR},{l:'month',v:MONTH},{l:'week',v:WEEK},{l:'day',v:DAY},{l:'hour',v:3600},{l:'minute',v:60}],parts=[],rem=sec;for(var i=0;i<tiers.length&&parts.length<2;i++){if(rem>=tiers[i].v){var n=Math.floor(rem/tiers[i].v);rem%=tiers[i].v;parts.push(n+' '+tiers[i].l+(n!==1?'s':''))}}return parts.length>0?parts.join(', '):'< 1 minute'}
