@@ -4,14 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Solo Mining Calculator</title>
-  <meta name="description" content="Calculate your probability of solo mining a Bitcoin block based on your hashrate. Live network stats, block reward, and expected time to find a block.">
+  <meta name="description" content="Calculate your probability of solo mining a block for BTC, XMR, DGB, or BCH based on your hashrate. Live network stats, block reward, and expected time.">
   <meta property="og:title" content="Solo Mining Calculator">
-  <meta property="og:description" content="What are your chances of mining a Bitcoin block? Calculate odds based on your hashrate.">
+  <meta property="og:description" content="What are your chances of solo mining a block? Calculate odds for Bitcoin, Monero, DigiByte, and Bitcoin Cash.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://solo.turtlecute.org">
   <meta name="twitter:card" content="summary">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="style.css?v=5">
+  <link rel="stylesheet" href="style.css?v=6">
+  <script defer src="https://umami.priorato.org/priorato" data-website-id="a3f061e6-ad2a-410f-9b1b-f0ae24c0dfc8"></script>
 </head>
 <body>
 
@@ -19,8 +20,16 @@
 
     <header>
       <h1>Solo Mining Calculator</h1>
-      <p class="tagline">What are your chances of mining a Bitcoin block?</p>
+      <p class="tagline" id="tagline">What are your chances of mining a Bitcoin block?</p>
     </header>
+
+    <nav class="coin-tabs" id="coin-tabs">
+      <button class="coin-tab active" data-coin="BTC">BTC</button>
+      <button class="coin-tab" data-coin="XMR">XMR</button>
+      <button class="coin-tab" data-coin="DGB">DGB</button>
+      <button class="coin-tab" data-coin="BCH">BCH</button>
+    </nav>
+    <div class="algo-note" id="algo-note" style="display:none"></div>
 
     <section id="input-section">
       <label for="hashrate-input">Your Hashrate</label>
@@ -55,16 +64,14 @@
         <div class="net-row"><dt>Difficulty</dt><dd id="stat-difficulty">--</dd></div>
         <div class="net-row"><dt>Block Height</dt><dd id="stat-blockheight">--</dd></div>
         <div class="net-row"><dt>Block Reward</dt><dd id="stat-reward">--</dd></div>
-        <div class="net-row"><dt>BTC Price</dt><dd id="stat-price">--</dd></div>
+        <div class="net-row"><dt id="label-price">BTC Price</dt><dd id="stat-price">--</dd></div>
         <div class="net-row highlight"><dt>Revenue If Found</dt><dd id="stat-revenue">--</dd></div>
       </dl>
     </div>
 
-
-
   </main>
 
   <noscript><p style="text-align:center;color:#8D8D8D;padding:2rem;">JavaScript is required to run this calculator.</p></noscript>
-  <script src="app.js?v=5"></script>
+  <script src="app.js?v=6"></script>
 </body>
 </html>

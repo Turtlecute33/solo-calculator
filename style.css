@@ -3,7 +3,7 @@
   --bg-card: #161616;
   --text: #EFEFEF;
   --text-muted: #8D8D8D;
-  --accent: #6B50FF;
+  --accent: #10B981;
   --border: #262626;
   --input-bg: #1A1A1A;
 }
@@ -45,6 +45,45 @@ header h1 {
   margin-bottom: 1rem;
 }
 
+/* Coin Tabs */
+.coin-tabs {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.coin-tab {
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.5rem 1.2rem;
+  background: var(--input-bg);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.coin-tab:hover {
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+
+.coin-tab.active {
+  background: var(--accent);
+  color: #0D0D0D;
+  border-color: var(--accent);
+}
+
+.algo-note {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: -1rem;
+  margin-bottom: 1.25rem;
+}
 
 /* Input */
 #input-section { margin-bottom: 1rem; }
@@ -74,7 +113,7 @@ header h1 {
   background: var(--input-bg);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 0;
+  border-radius: 8px;
   outline: none;
   min-width: 0;
   transition: border-color 0.2s;
@@ -99,7 +138,7 @@ header h1 {
   background: var(--input-bg);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 0;
+  border-radius: 8px;
   cursor: pointer;
   outline: none;
   transition: border-color 0.2s;
@@ -135,7 +174,7 @@ header h1 {
 .card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-radius: 0;
+  border-radius: 12px;
   padding: 1rem 1.1rem;
   transition: background-color 0.3s, border-color 0.3s, transform 0.2s;
 }
@@ -257,4 +296,5 @@ section h2 {
   .input-group select { min-width: unset; }
   .primary-result .odds { font-size: 1.4rem; }
   .card .value { font-size: 1.05rem; }
+  .coin-tab { padding: 0.45rem 0.9rem; font-size: 0.8rem; }
 }
