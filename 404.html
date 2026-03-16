@@ -4,10 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>404 - Solo Mining Calculator</title>
-  <meta http-equiv="refresh" content="0;url=/">
   <style>body{background:#0D0D0D;color:#EFEFEF;font-family:system-ui,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0}a{color:#10B981}</style>
 </head>
 <body>
-  <p>Redirecting to <a href="/">Solo Mining Calculator</a>&hellip;</p>
+  <p>Redirecting to <a id="target-link" href="./">Solo Mining Calculator</a>&hellip;</p>
+  <script>
+  (function(){
+    var path=window.location.pathname;
+    var parts=path.split('/').filter(Boolean);
+    var base='/';
+    var routePath=path;
+    if(/github\.io$/i.test(window.location.hostname)&&parts.length){
+      base='/'+parts[0]+'/';
+      routePath='/' + parts.slice(1).join('/');
+    }
+    var target=/\/best-share(?:\.html)?\/?$/i.test(routePath)?base+'best-share.html':base;
+    var link=document.getElementById('target-link');
+    if(link)link.href=target;
+    window.location.replace(target+window.location.search+window.location.hash);
+  })();
+  </script>
 </body>
 </html>

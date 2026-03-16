@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Best Share Checker - Did You Find a Bitcoin Block?</title>
-  <meta name="description" content="Enter your best share difficulty to see if you solo mined a Bitcoin or Bitcoin Cash block. Compare your share against the current network difficulty in real time.">
-  <meta name="keywords" content="best share checker, solo mining share, bitcoin share difficulty, did I find a block, share vs difficulty, solo mining block check, BTC share, BCH share">
-  <link rel="canonical" href="https://solo.turtlecute.org/best-share">
+  <title>Best Share Checker - Did You Find a BTC, BCH, or XMR Block?</title>
+  <meta name="description" content="Enter your best share difficulty to see if you solo mined a Bitcoin, Bitcoin Cash, or Monero block. Compare your share against the current network difficulty in real time.">
+  <meta name="keywords" content="best share checker, solo mining share, bitcoin share difficulty, monero share difficulty, did I find a block, share vs difficulty, solo mining block check, BTC share, BCH share, XMR share">
+  <link rel="canonical" href="https://solo.turtlecute.org/best-share.html">
   <meta property="og:title" content="Best Share Checker - Did You Find a Block?">
-  <meta property="og:description" content="Paste your best share difficulty to instantly see if it was enough to solo mine a Bitcoin or Bitcoin Cash block.">
+  <meta property="og:description" content="Paste your best share difficulty to instantly see if it was enough to solo mine a BTC, BCH, or XMR block.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://solo.turtlecute.org/best-share">
+  <meta property="og:url" content="https://solo.turtlecute.org/best-share.html">
   <meta property="og:site_name" content="Solo Mining Calculator">
   <meta property="og:locale" content="en_US">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Best Share Checker - Did You Find a Block?">
-  <meta name="twitter:description" content="Check if your best mining share was enough to find a block. Real-time network difficulty comparison.">
+  <meta name="twitter:description" content="Check if your best mining share was enough to find a BTC, BCH, or XMR block. Real-time network difficulty comparison.">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#F4A63A">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23F4A63A'/><text x='16' y='22' text-anchor='middle' font-size='18' font-weight='bold' fill='white'>&#x26CF;</text></svg>">
@@ -26,7 +26,7 @@
   <link rel="preconnect" href="https://api.blockchair.com" crossorigin>
   <link rel="preconnect" href="https://api.coingecko.com" crossorigin>
   <script defer src="https://umami.priorato.org/priorato" data-website-id="a3f061e6-ad2a-410f-9b1b-f0ae24c0dfc8"></script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Best Share Checker","url":"https://solo.turtlecute.org/best-share","description":"Check if your best mining share was enough to solo mine a Bitcoin or Bitcoin Cash block. Compare share difficulty against live network difficulty.","applicationCategory":"FinanceApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Best Share Checker","url":"https://solo.turtlecute.org/best-share.html","description":"Check if your best mining share was enough to solo mine a Bitcoin, Bitcoin Cash, or Monero block. Compare share difficulty against live network difficulty.","applicationCategory":"FinanceApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
   <style>
 :root{--bg:#0D0D0D;--bg-card:#161616;--text:#EFEFEF;--text-muted:#8D8D8D;--accent:#F4A63A;--border:#262626;--input-bg:#1A1A1A;--success:#22C55E;--danger:#EF4444}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -71,6 +71,7 @@ section h2{font-size:.85rem;font-weight:600;color:var(--text-muted);text-transfo
 .progress-labels{display:flex;justify-content:space-between;font-size:.65rem;color:var(--text-muted)}
 .network-info{margin-bottom:1.5rem}
 .net-heading{font-size:.75rem;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem}
+.status-note{font-size:.75rem;color:var(--text-muted);margin:-.1rem 0 .75rem}
 .net-list{margin:0}
 .net-row{display:flex;justify-content:space-between;align-items:baseline;padding:.3rem 0;border-bottom:1px solid var(--border);transition:border-color .3s}
 .net-row:last-child{border-bottom:none}
@@ -106,8 +107,8 @@ footer a:hover{text-decoration:underline}
 
     <div class="page-nav-wrap">
       <nav class="page-nav">
-        <a href="/">Block Odds</a>
-        <a href="/best-share" class="active">Best Share</a>
+        <a href="./">Block Odds</a>
+        <a href="./best-share.html" class="active">Best Share</a>
       </nav>
     </div>
 
@@ -157,6 +158,7 @@ footer a:hover{text-decoration:underline}
 
     <div class="network-info" id="network-section">
       <div class="net-heading">Network <span id="refresh-indicator" class="pulse">&#x25cf;</span></div>
+      <p class="status-note" id="status-note">Loading network data...</p>
       <dl class="net-list">
         <div class="net-row"><dt>Hashrate</dt><dd id="net-hashrate">--</dd></div>
         <div class="net-row"><dt>Difficulty</dt><dd id="net-difficulty">--</dd></div>
@@ -170,7 +172,7 @@ footer a:hover{text-decoration:underline}
       <h2>What Is Share Difficulty in Solo Mining?</h2>
       <p>When you solo mine, your mining hardware repeatedly attempts to find a valid block hash. Each attempt produces a "share" with a certain difficulty level. Share difficulty measures how hard it was to find that particular hash. The higher the share difficulty, the closer you were to finding a real block.</p>
       <h3>When Does a Share Become a Block?</h3>
-      <p>A share becomes a valid block when its difficulty meets or exceeds the current network difficulty. For Bitcoin, the network difficulty is typically in the range of tens of trillions (T). If your best share has a difficulty of 4.2T and the network difficulty is 90T, your share reached about 4.67% of what was needed — impressive, but not a block. If your share difficulty equals or exceeds the network difficulty, congratulations — you found a block!</p>
+      <p>A share becomes a valid block when its difficulty meets or exceeds the current network difficulty. If your best share has a difficulty of 4.2T and the network difficulty is 90T, your share reached about 4.67% of what was needed — impressive, but not a block. If your share difficulty equals or exceeds the network difficulty, congratulations — you found a block.</p>
       <h3>How to Read the Percentage</h3>
       <p>The percentage shown represents how close your share came to meeting the block difficulty threshold. 100% or above means the share was a valid block. Below 100% means it was a near miss. Even small percentages against Bitcoin's difficulty represent remarkable luck — most individual shares have difficulty many orders of magnitude below the network difficulty.</p>
     </article>
@@ -183,142 +185,64 @@ footer a:hover{text-decoration:underline}
 
   <noscript><p style="text-align:center;color:#8D8D8D;padding:2rem;">JavaScript is required to run this checker.</p></noscript>
   <script>
-(function(){'use strict';var FETCH_TIMEOUT=12000,CACHE_MAX_AGE=3600000;
-var COINS={BTC:{name:'Bitcoin',symbol:'BTC',blockTime:600,accent:'#F4A63A',blockchairSlug:'bitcoin',formatNetHash:function(h){return(h/1e18).toFixed(2)+' EH/s'},rewardFn:function(h){if(h===null)return null;var v=Math.floor(h/210000);return v>=64?0:50/Math.pow(2,v)},deriveHashrate:function(d,bt){return d*4294967296/bt}},
-BCH:{name:'Bitcoin Cash',symbol:'BCH',blockTime:600,accent:'#4AC99B',blockchairSlug:'bitcoin-cash',formatNetHash:function(h){return(h/1e18).toFixed(2)+' EH/s'},rewardFn:function(h){if(h===null)return null;var v=Math.floor(h/210000);return v>=64?0:50/Math.pow(2,v)},deriveHashrate:function(d,bt){return d*4294967296/bt}},
-XMR:{name:'Monero',symbol:'XMR',blockTime:120,accent:'#E8734A',blockchairSlug:'monero',formatNetHash:function(h){return(h/1e9).toFixed(2)+' GH/s'},rewardFn:function(){return 0.6},deriveHashrate:function(d,bt){return d/bt}}};
+(function(){'use strict';var FETCH_TIMEOUT=12000,CACHE_MAX_AGE=3600000,REFRESH_INTERVAL=300000;
+var COINS={BTC:{name:'Bitcoin',symbol:'BTC',blockTime:600,accent:'#F4A63A',blockchairSlug:'bitcoin',fallback:{networkHashrate:1e21,difficulty:149301205959700,blockHeight:927087,blockReward:3.125,price:67730.49},formatNetHash:function(h){return(h/1e18).toFixed(2)+' EH/s'},rewardFn:function(h){if(h===null)return null;var v=Math.floor(h/210000);return v>=64?0:50/Math.pow(2,v)},deriveHashrate:function(d,bt){return d*4294967296/bt}},
+BCH:{name:'Bitcoin Cash',symbol:'BCH',blockTime:600,accent:'#4AC99B',blockchairSlug:'bitcoin-cash',fallback:{networkHashrate:6.37e18,difficulty:942654297832,blockHeight:928575,blockReward:3.125,price:454.49},formatNetHash:function(h){return(h/1e18).toFixed(2)+' EH/s'},rewardFn:function(h){if(h===null)return null;var v=Math.floor(h/210000);return v>=64?0:50/Math.pow(2,v)},deriveHashrate:function(d,bt){return d*4294967296/bt}},
+XMR:{name:'Monero',symbol:'XMR',blockTime:120,accent:'#E8734A',blockchairSlug:'monero',fallback:{networkHashrate:6542711697,difficulty:785125403666,blockHeight:3602700,blockReward:0.6,price:328.71},formatNetHash:function(h){return(h/1e9).toFixed(2)+' GH/s'},rewardFn:function(){return 0.6},deriveHashrate:function(d,bt){return d/bt}}};
 
-var UNITS={T:1e12,G:1e9,M:1e6,P:1e15,E:1e18,raw:1};
-
-var state={coin:'',networkHashrate:0,difficulty:0,blockHeight:null,blockReward:null,price:null,hasPrice:false,shareValue:4.2,shareUnit:'T',networkError:false};
+var UNITS={M:1e6,G:1e9,T:1e12,P:1e15,E:1e18,raw:1};
+var DEFAULT_SHARES={BTC:{val:4.2,unit:'T'},BCH:{val:200,unit:'G'},XMR:{val:1,unit:'G'}};
+var state={coin:'',networkHashrate:0,difficulty:0,blockHeight:null,blockReward:null,price:null,hasPrice:false,shareValue:4.2,shareUnit:'T',networkError:false,dataSource:'default',defaultPrice:false};
 
 function debounce(fn,ms){var t;return function(){clearTimeout(t);t=setTimeout(fn,ms)}}
-function fmt(n){if(!isFinite(n))return'N/A';var r=Math.round(n),s=r<1e20?String(r):r.toFixed(0),o='';for(var i=s.length-1,c=0;i>=0;i--,c++){if(c>0&&c%3===0)o='\u2005'+o;o=s[i]+o}return o}
 function isFiniteNum(n){return typeof n==='number'&&isFinite(n)}
+function toNumber(v){var n=typeof v==='string'?parseFloat(v):v;return isFiniteNum(n)?n:null}
+function fmt(n){if(!isFinite(n))return'N/A';var r=Math.round(n),s=r<1e20?String(r):r.toFixed(0),o='';for(var i=s.length-1,c=0;i>=0;i--,c++){if(c>0&&c%3===0)o='\u2005'+o;o=s[i]+o}return o}
 function coinConf(){return COINS[state.coin]}
 function shareDiff(){return state.shareValue*(UNITS[state.shareUnit]||1)}
 function formatDiff(d){if(d>=1e18)return(d/1e18).toFixed(2)+' E';if(d>=1e15)return(d/1e15).toFixed(2)+' P';if(d>=1e12)return(d/1e12).toFixed(2)+' T';if(d>=1e9)return(d/1e9).toFixed(2)+' G';if(d>=1e6)return(d/1e6).toFixed(2)+' M';return fmt(d)}
 function $(id){return document.getElementById(id)}
 function set(id,txt){var el=$(id);if(el)el.textContent=txt}
-
-function render(){var conf=coinConf();if(!conf)return;
-set('label-price',conf.symbol+' Price');
-set('tagline','Check if your best share was enough to mine a '+conf.name+' block');
-
-var sd=shareDiff();
-set('stat-share',formatDiff(sd));
-
-if(state.difficulty<=0){
-  set('result-verdict',state.networkError?'Network data unavailable':'Waiting for network data\u2026');
-  set('result-pct','--%');
-  $('result-block').className='result-block not-found';
-  $('result-verdict').className='result-verdict no';
-  $('progress-fill').style.width='0%';
-  $('progress-fill').className='progress-fill low';
-  set('stat-netdiff','--');set('stat-ratio','--');set('stat-luck','--');
-  set('net-hashrate','--');set('net-difficulty','--');set('net-blockheight','--');set('net-reward','--');set('net-price','--');
-  return;
-}
-
-var pct=sd/state.difficulty*100;
-var isBlock=pct>=100;
-
-/* verdict */
-var vEl=$('result-verdict');
-if(isBlock){
-  set('result-verdict','BLOCK FOUND!');
-  vEl.className='result-verdict yes';
-  $('result-block').className='result-block found';
-}else{
-  set('result-verdict','Not a block \u2014 but keep mining!');
-  vEl.className='result-verdict no';
-  $('result-block').className='result-block not-found';
-}
-
-/* percentage */
-if(pct>=1){set('result-pct',pct.toFixed(2)+'%')}
-else if(pct>=0.0001){set('result-pct',pct.toFixed(4)+'%')}
-else if(pct>0){
-  var exp=Math.floor(Math.log10(pct));
-  set('result-pct',pct.toFixed(Math.abs(exp)+2)+'%');
-}else{set('result-pct','0%')}
-
-/* progress bar — cap visual at 100% */
-var barPct=Math.min(pct,100);
-$('progress-fill').style.width=barPct+'%';
-$('progress-fill').className='progress-fill '+(isBlock?'high':'low');
-
-/* cards */
-set('stat-netdiff',formatDiff(state.difficulty));
-
-if(pct>=1){set('stat-ratio',pct.toFixed(2)+'%')}
-else if(pct>=0.0001){set('stat-ratio',pct.toFixed(4)+'%')}
-else if(pct>0){set('stat-ratio',pct.toExponential(2)+'%')}
-else{set('stat-ratio','0%')}
-
-/* luck: how many times luckier than average per-hash you'd need to be */
-if(sd>0&&state.difficulty>0){
-  if(isBlock){set('stat-luck','You won the lottery!')}
-  else{
-    var x=state.difficulty/sd;
-    if(x>=1e6){set('stat-luck','1 in '+fmt(Math.round(x)))}
-    else{set('stat-luck','1 in '+(x>=10?fmt(Math.round(x)):x.toFixed(1)))}
-  }
-}else{set('stat-luck','--')}
-
-/* network info */
-set('net-hashrate',state.networkHashrate>0?conf.formatNetHash(state.networkHashrate):'--');
-set('net-difficulty',formatDiff(state.difficulty));
-set('net-blockheight',state.blockHeight!==null?fmt(state.blockHeight):'--');
-var rw=state.blockReward!==null?state.blockReward:(conf.rewardFn?conf.rewardFn(state.blockHeight):null);
-set('net-reward',rw!==null?rw+' '+conf.symbol:'--');
-set('net-price',state.hasPrice?'$'+fmt(state.price):'--');
-}
-
 function showPulse(on){var el=$('refresh-indicator');if(el)el.style.display=on?'':'none'}
+
+function setStatus(){if(state.dataSource==='live'){set('status-note','Using live network data.');return}if(state.dataSource==='cache'){set('status-note',state.networkError?'Live APIs unavailable. Showing cached network data.':'Using cached network data while refreshing.');return}set('status-note',state.networkError?'Live APIs unavailable. Showing built-in fallback defaults.':'Using built-in fallback defaults until live data loads.')}
+
+function render(){var conf=coinConf();if(!conf)return;set('label-price',conf.symbol+' Price');set('tagline','Check if your best share was enough to mine a '+conf.name+' block');setStatus();
+var sd=shareDiff(),rw=state.blockReward!==null?state.blockReward:(conf.rewardFn?conf.rewardFn(state.blockHeight):null);set('stat-share',formatDiff(sd));
+if(state.difficulty<=0){set('result-verdict',state.networkError?'Network data unavailable':'Waiting for network data\u2026');set('result-pct','--%');$('result-block').className='result-block not-found';$('result-verdict').className='result-verdict no';$('progress-fill').style.width='0%';$('progress-fill').className='progress-fill low';set('stat-netdiff','--');set('stat-ratio','--');set('stat-luck','--');set('net-hashrate','--');set('net-difficulty','--');set('net-blockheight','--');set('net-reward','--');set('net-price','--');return}
+var pct=sd>0?sd/state.difficulty*100:0,isBlock=pct>=100,vEl=$('result-verdict');if(isBlock){set('result-verdict','BLOCK FOUND!');vEl.className='result-verdict yes';$('result-block').className='result-block found'}else{set('result-verdict','Not a block, but close counts here');vEl.className='result-verdict no';$('result-block').className='result-block not-found'}
+if(pct>=1){set('result-pct',pct.toFixed(2)+'%')}else if(pct>=0.0001){set('result-pct',pct.toFixed(4)+'%')}else if(pct>0){set('result-pct',pct.toExponential(2)+'%')}else{set('result-pct','0%')}
+$('progress-fill').style.width=Math.min(pct,100)+'%';$('progress-fill').className='progress-fill '+(isBlock?'high':'low');set('stat-netdiff',formatDiff(state.difficulty));set('stat-ratio',pct>0?(pct>=1?pct.toFixed(2)+'%':pct>=0.0001?pct.toFixed(4)+'%':pct.toExponential(2)+'%'):'0%');
+if(sd>0&&state.difficulty>0){if(isBlock){set('stat-luck','You beat the network threshold.')}else{var x=state.difficulty/sd;set('stat-luck','1 in '+(x>=10?fmt(Math.round(x)):x.toFixed(1)))}}else{set('stat-luck','--')}
+set('net-hashrate',state.networkHashrate>0?conf.formatNetHash(state.networkHashrate):'--');set('net-difficulty',formatDiff(state.difficulty));set('net-blockheight',state.blockHeight!==null?fmt(state.blockHeight):'--');set('net-reward',rw!==null?rw+' '+conf.symbol:'--');set('net-price',state.hasPrice?'$'+fmt(state.price):'--')}
 
 function fetchWithTimeout(url,ms){var c=new AbortController(),t=setTimeout(function(){c.abort()},ms||FETCH_TIMEOUT);return fetch(url,{signal:c.signal}).then(function(r){clearTimeout(t);if(!r.ok)throw new Error('http-'+r.status);return r},function(e){clearTimeout(t);throw e})}
 function fetchJson(url){return fetchWithTimeout(url).then(function(r){return r.json()})}
 function fetchText(url){return fetchWithTimeout(url).then(function(r){return r.text()})}
-function tryInOrder(fns){var i=0;function next(){if(i>=fns.length)return Promise.resolve(false);var fn=fns[i++];return fn().then(function(){return true},function(){return next()})}return next()}
+function tryInOrder(fns){var i=0;function next(){if(i>=fns.length)return Promise.reject(new Error('all_failed'));return fns[i++]().catch(next)}return next()}
 
-function cacheNetworkState(){try{localStorage.setItem('bs_net_'+state.coin,JSON.stringify({networkHashrate:state.networkHashrate,difficulty:state.difficulty,blockHeight:state.blockHeight,blockReward:state.blockReward,price:state.price,ts:Date.now()}))}catch(e){}}
-function loadCachedNetworkState(coin){try{var raw=localStorage.getItem('bs_net_'+coin);if(!raw)return;var d=JSON.parse(raw);if(Date.now()-d.ts>CACHE_MAX_AGE)return;if(isFiniteNum(d.networkHashrate)&&d.networkHashrate>0)state.networkHashrate=d.networkHashrate;if(isFiniteNum(d.difficulty)&&d.difficulty>0)state.difficulty=d.difficulty;if(isFiniteNum(d.blockHeight))state.blockHeight=d.blockHeight;if(isFiniteNum(d.blockReward))state.blockReward=d.blockReward;if(isFiniteNum(d.price)&&d.price>0){state.price=d.price;state.hasPrice=true}}catch(e){}}
+function cacheNetworkState(){if(state.dataSource==='default')return;try{localStorage.setItem('bs_net_'+state.coin,JSON.stringify({networkHashrate:state.networkHashrate,difficulty:state.difficulty,blockHeight:state.blockHeight,blockReward:state.blockReward,price:state.defaultPrice?null:state.price,ts:Date.now()}))}catch(e){}}
+function loadCachedNetworkState(coin,allowStale){try{var raw=localStorage.getItem('bs_net_'+coin);if(!raw)return false;var d=JSON.parse(raw);if(!allowStale&&Date.now()-d.ts>CACHE_MAX_AGE)return false;var got=false,hr=toNumber(d.networkHashrate),diff=toNumber(d.difficulty),height=toNumber(d.blockHeight),reward=toNumber(d.blockReward),price=toNumber(d.price);if(hr&&hr>0){state.networkHashrate=hr;got=true}if(diff&&diff>0){state.difficulty=diff;got=true}if(height!==null)state.blockHeight=height;if(reward!==null)state.blockReward=reward;if(price&&price>0){state.price=price;state.hasPrice=true;state.defaultPrice=false}if(got)state.dataSource='cache';return got}catch(e){return false}}
+function applyFallbackNetworkState(coin){var fallback=COINS[coin].fallback;state.networkHashrate=fallback.networkHashrate;state.difficulty=fallback.difficulty;state.blockHeight=fallback.blockHeight;state.blockReward=fallback.blockReward;state.price=fallback.price;state.hasPrice=true;state.defaultPrice=true;state.dataSource='default'}
 
-function applyBlockchair(data){if(!data||!data.data)throw new Error('bad blockchair');var d=data.data,conf=coinConf(),got=false;if(isFiniteNum(d.difficulty)&&d.difficulty>0)state.difficulty=d.difficulty;if(d.hashrate_24h){var hr=parseFloat(d.hashrate_24h);if(isFiniteNum(hr)&&hr>0){state.networkHashrate=hr;got=true}}if(!got&&state.difficulty>0&&conf.deriveHashrate){state.networkHashrate=conf.deriveHashrate(state.difficulty,conf.blockTime);got=true}if(isFiniteNum(d.best_block_height))state.blockHeight=d.best_block_height;if(isFiniteNum(d.reward_per_block))state.blockReward=d.reward_per_block;if(isFiniteNum(d.market_price_usd)&&d.market_price_usd>0){if(!state.hasPrice){state.price=d.market_price_usd;state.hasPrice=true}try{localStorage.setItem('cached_'+state.coin+'_price',String(d.market_price_usd))}catch(e){}}if(!got)throw new Error('no hashrate from blockchair')}
+function applyBlockchair(data){if(!data||!data.data)throw new Error('bad blockchair');var d=data.data,conf=coinConf(),got=false,diff=toNumber(d.difficulty),hr=toNumber(d.hashrate_24h),height=toNumber(d.best_block_height),reward=toNumber(d.reward_per_block),price=toNumber(d.market_price_usd);if(diff&&diff>0)state.difficulty=diff;if(hr&&hr>0){state.networkHashrate=hr;got=true}if(!got&&state.difficulty>0&&conf.deriveHashrate){state.networkHashrate=conf.deriveHashrate(state.difficulty,conf.blockTime);got=true}if(height!==null)state.blockHeight=height;if(reward!==null)state.blockReward=reward;if(price&&price>0){state.price=price;state.hasPrice=true;state.defaultPrice=false;try{localStorage.setItem('cached_'+state.coin+'_price',String(price))}catch(e){}}if(!got)throw new Error('no hashrate from blockchair');state.dataSource='live'}
 function fetchBlockchair(slug){return fetchJson('https://api.blockchair.com/'+slug+'/stats').then(applyBlockchair)}
 
-function fetchBTC_mempool(){return Promise.allSettled([fetchJson('https://mempool.space/api/v1/mining/hashrate/1m'),fetchText('https://mempool.space/api/blocks/tip/height')]).then(function(res){var got=false;if(res[0].status==='fulfilled'){var v=res[0].value;if(isFiniteNum(v.currentHashrate)&&v.currentHashrate>0){state.networkHashrate=v.currentHashrate;got=true}if(isFiniteNum(v.currentDifficulty))state.difficulty=v.currentDifficulty}if(res[1].status==='fulfilled'){var h=parseInt(res[1].value,10);if(isFiniteNum(h)&&h>=0)state.blockHeight=h}if(!got)throw new Error('no BTC data from mempool')})}
+function fetchBTC_mempool(){return Promise.allSettled([fetchJson('https://mempool.space/api/v1/mining/hashrate/1m'),fetchText('https://mempool.space/api/blocks/tip/height')]).then(function(res){var got=false;if(res[0].status==='fulfilled'){var v=res[0].value,hr=toNumber(v&&v.currentHashrate),diff=toNumber(v&&v.currentDifficulty);if(hr&&hr>0){state.networkHashrate=hr;got=true}if(diff&&diff>0)state.difficulty=diff}if(res[1].status==='fulfilled'){var h=parseInt(res[1].value,10);if(isFiniteNum(h)&&h>=0)state.blockHeight=h}if(!got)throw new Error('no BTC data from mempool');state.dataSource='live'})}
 function fetchNetworkBTC(){return tryInOrder([fetchBTC_mempool,function(){return fetchBlockchair('bitcoin')}])}
 function fetchNetworkBCH(){return tryInOrder([function(){return fetchBlockchair('bitcoin-cash')}])}
 function fetchNetworkXMR(){return tryInOrder([function(){return fetchBlockchair('monero')}])}
 var NETWORK_FNS={BTC:fetchNetworkBTC,BCH:fetchNetworkBCH,XMR:fetchNetworkXMR};
 
-function fetchPrice(){var conf=coinConf();if(!conf)return Promise.resolve();if(state.hasPrice)return Promise.resolve();var ck='cached_'+state.coin+'_price';var GECKO_IDS={BTC:'bitcoin',BCH:'bitcoin-cash',XMR:'monero'};var gid=GECKO_IDS[state.coin]||conf.blockchairSlug;return fetchJson('https://api.coingecko.com/api/v3/simple/price?ids='+gid+'&vs_currencies=usd').then(function(data){var p=data&&data[gid]&&data[gid].usd;if(isFiniteNum(p)&&p>0){state.price=p;state.hasPrice=true;try{localStorage.setItem(ck,String(p))}catch(e){}return}throw new Error('no price')}).catch(function(){try{var c=parseFloat(localStorage.getItem(ck));if(isFiniteNum(c)&&c>0){state.price=c;state.hasPrice=true}}catch(e){}})}
+function fetchPrice(){var conf=coinConf(),ck='cached_'+state.coin+'_price',GECKO_IDS={BTC:'bitcoin',BCH:'bitcoin-cash',XMR:'monero'},gid=GECKO_IDS[state.coin]||conf.blockchairSlug;if(!conf)return Promise.resolve();if(state.hasPrice&&!state.defaultPrice)return Promise.resolve();return fetchJson('https://api.coingecko.com/api/v3/simple/price?ids='+gid+'&vs_currencies=usd').then(function(data){var p=toNumber(data&&data[gid]&&data[gid].usd);if(p&&p>0){state.price=p;state.hasPrice=true;state.defaultPrice=false;try{localStorage.setItem(ck,String(p))}catch(e){};return}throw new Error('no price')}).catch(function(){try{var c=parseFloat(localStorage.getItem(ck));if(isFiniteNum(c)&&c>0){state.price=c;state.hasPrice=true;state.defaultPrice=false}}catch(e){}})}
 
-function loadStaleCache(){try{var raw=localStorage.getItem('bs_net_'+state.coin);if(!raw)return;var d=JSON.parse(raw);if(isFiniteNum(d.networkHashrate)&&d.networkHashrate>0)state.networkHashrate=d.networkHashrate;if(isFiniteNum(d.difficulty)&&d.difficulty>0)state.difficulty=d.difficulty;if(isFiniteNum(d.blockHeight))state.blockHeight=d.blockHeight;if(isFiniteNum(d.blockReward))state.blockReward=d.blockReward;if(isFiniteNum(d.price)&&d.price>0){state.price=d.price;state.hasPrice=true}}catch(e){}}
-function fetchData(){showPulse(true);var fn=NETWORK_FNS[state.coin]||function(){return Promise.resolve()};return fn().then(function(){state.networkError=false;return fetchPrice().catch(function(){})},function(){state.networkError=true;if(state.difficulty===0)loadStaleCache();return fetchPrice().catch(function(){})}).then(function(){cacheNetworkState();showPulse(false)})}
+function fetchData(){showPulse(true);var fn=NETWORK_FNS[state.coin]||function(){return Promise.resolve()};return fn().then(function(){state.networkError=false},function(){state.networkError=true;if(!loadCachedNetworkState(state.coin,true))applyFallbackNetworkState(state.coin)}).then(function(){return fetchPrice().catch(function(){})}).then(function(){cacheNetworkState();showPulse(false)},function(){showPulse(false)})}
 
 function save(){try{localStorage.setItem('bs_share_'+state.coin,String(state.shareValue));localStorage.setItem('bs_unit_'+state.coin,state.shareUnit);localStorage.setItem('bs_coin',state.coin)}catch(e){}}
 
-function switchCoin(coin){if(!COINS[coin]||coin===state.coin)return;state.coin=coin;state.networkHashrate=0;state.difficulty=0;state.blockHeight=null;state.blockReward=null;state.price=null;state.hasPrice=false;state.networkError=false;
-var DEFS={BTC:{val:4.2,unit:'T'},BCH:{val:200,unit:'G'},XMR:{val:1,unit:'G'}};var def=DEFS[coin]||{val:1,unit:'T'};var defUnit=def.unit;var defVal=def.val;
-try{var sv=localStorage.getItem('bs_share_'+coin),svv=parseFloat(sv);state.shareValue=sv!==null&&isFinite(svv)&&svv>=0?svv:defVal;var su=localStorage.getItem('bs_unit_'+coin);state.shareUnit=(su&&UNITS[su]!==undefined)?su:defUnit}catch(e){state.shareValue=defVal;state.shareUnit=defUnit}
-loadCachedNetworkState(coin);
-var input=$('share-input'),select=$('unit-select');
-if(input)input.value=state.shareValue;
-if(select)select.value=state.shareUnit;
-document.querySelectorAll('.coin-tab').forEach(function(t){t.classList.toggle('active',t.dataset.coin===coin)});
-document.documentElement.style.setProperty('--accent',COINS[coin].accent);
-save();render();fetchData().then(render)}
+function switchCoin(coin){if(!COINS[coin]||coin===state.coin)return;state.coin=coin;state.networkHashrate=0;state.difficulty=0;state.blockHeight=null;state.blockReward=null;state.price=null;state.hasPrice=false;state.networkError=false;state.dataSource='default';state.defaultPrice=false;var def=DEFAULT_SHARES[coin]||{val:1,unit:'T'};try{var sv=localStorage.getItem('bs_share_'+coin),svv=parseFloat(sv);state.shareValue=sv!==null&&isFinite(svv)&&svv>=0?svv:def.val;var su=localStorage.getItem('bs_unit_'+coin);state.shareUnit=(su&&UNITS[su]!==undefined)?su:def.unit}catch(e){state.shareValue=def.val;state.shareUnit=def.unit}if(!loadCachedNetworkState(coin,false))applyFallbackNetworkState(coin);var input=$('share-input'),select=$('unit-select');if(input)input.value=state.shareValue;if(select)select.value=state.shareUnit;document.querySelectorAll('.coin-tab').forEach(function(t){t.classList.toggle('active',t.dataset.coin===coin)});document.documentElement.style.setProperty('--accent',COINS[coin].accent);save();render();fetchData().then(render)}
 
-function init(){var savedCoin='BTC';try{savedCoin=localStorage.getItem('bs_coin')||'BTC'}catch(e){}if(!COINS[savedCoin])savedCoin='BTC';
-var input=$('share-input'),select=$('unit-select');
-var update=debounce(function(){var v=parseFloat(input.value);if(isFinite(v)&&v>=0){state.shareValue=v;save();render()}},300);
-if(input)input.addEventListener('input',update);
-if(select)select.addEventListener('change',function(){state.shareUnit=select.value;save();render()});
-document.querySelectorAll('.coin-tab').forEach(function(t){t.addEventListener('click',function(){switchCoin(t.dataset.coin)})});
-switchCoin(savedCoin);setInterval(function(){fetchData().then(render)},300000)}
+function init(){var savedCoin='BTC';try{savedCoin=localStorage.getItem('bs_coin')||'BTC'}catch(e){}if(!COINS[savedCoin])savedCoin='BTC';var input=$('share-input'),select=$('unit-select');var update=debounce(function(){var v=parseFloat(input.value);if(isFinite(v)&&v>=0){state.shareValue=v;save();render()}},300);if(input)input.addEventListener('input',update);if(select)select.addEventListener('change',function(){state.shareUnit=select.value;save();render()});document.querySelectorAll('.coin-tab').forEach(function(t){t.addEventListener('click',function(){switchCoin(t.dataset.coin)})});switchCoin(savedCoin);setInterval(function(){fetchData().then(render)},REFRESH_INTERVAL)}
 document.addEventListener('DOMContentLoaded',init)})();
   </script>
 </body>
